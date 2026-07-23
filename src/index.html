@@ -1,23 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla App Template</title>
-    <link rel="stylesheet" href="./css/styles.css" />
+    <title>Cinemania — Home</title>
+    <link rel="icon" type="image/svg+xml" href="./img/logo.svg" />
+    <link rel="stylesheet" href="./css/variables.css" />
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/layout.css" />
   </head>
   <body>
-    <load src="./partials/header.html" icon-path="img/sprite.svg#logo" />
+    <load src="./partials/header.html" />
 
     <main>
-      <!-- Loads the specified .html file -->
-      <load src="./partials/vite-promo.html" />
-      <load src="./partials/badges.html" />
+      <load src="./partials/hero.html" />
+
+      <section class="weekly-trends">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Weekly Trends</h2>
+            <a href="./catalog.html" class="see-all-link">See all</a>
+          </div>
+          <ul class="weekly-list" id="weeklyList"></ul>
+        </div>
+      </section>
+
+      <section class="upcoming">
+        <div class="container">
+          <h2 class="section-title">Upcoming This Month</h2>
+          <div class="upcoming-wrapper" id="upcomingWrapper"></div>
+        </div>
+      </section>
     </main>
 
     <load src="./partials/footer.html" />
+    <load src="./partials/modal.html" />
+    <load src="./partials/loader.html" />
 
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>
