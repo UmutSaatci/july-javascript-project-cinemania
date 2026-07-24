@@ -1,96 +1,428 @@
-.catalog-section { padding-bottom: 60px; }
-
-/* SEARCH & FILTERS */
-.search-filter-wrapper { margin-bottom: 40px; }
-.search-filter-form { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-.search-input-wrapper { position: relative; width: 100%; }
-.search-input { width: 100%; height: 48px; background: transparent; border: 1px solid var(--border-light-strong); border-radius: 8px; padding: 0 40px 0 20px; color: var(--text-primary); font-size: 14px; outline: none; box-sizing: border-box; }
-.searcher__clear { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-light-muted); cursor: pointer; font-size: 16px; }
-.search-btn { width: 48px; height: 48px; flex-shrink: 0; background: var(--gradient-primary); border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-.search-btn svg { stroke: var(--black); }
-
-.custom-select { position: relative; flex: 1; }
-.custom-select__btn { width: 100%; height: 48px; background: transparent; border: 1px solid var(--border-light-strong); border-radius: 8px; padding: 0 20px; color: var(--text-primary); font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-sizing: border-box; }
-.custom-select__arrow { transition: transform 0.2s ease; stroke: var(--grey-white-theme); }
-
-/* DROPDOWN LİSTE */
-.custom-select__list { 
-    position: absolute; 
-    top: 54px; 
-    left: 0; 
-    width: 100%; 
-    background: var(--surface-dark); 
-    border: 1px solid var(--border-light-strong); 
-    border-radius: 8px; 
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
-    z-index: 50; 
-    max-height: 292px; 
-    overflow-y: auto; 
+/* ==========================================================================
+   1. GENEL RESET VE FORM KAPSAYICI DÜZENİ
+   ========================================================================== */
+.catalog {
+  padding-top: 80px;
 }
-.custom-select__list.hide { display: none !important; }
-
-.custom-select__list li { padding: 12px 20px; color: var(--white); font-size: 14px; border-bottom: 1px solid var(--border-light-soft); cursor: pointer; }
-.custom-select__list li:hover, .custom-select__list li.selected { color: var(--orange); background: var(--overlay-white-08); }
-.year-menu li { text-align: center; border-bottom: none; }
-.year-menu li.selected { font-size: 24px; font-weight: 500; line-height: 28px;}
-
-/* MOVIE GRID */
-.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); justify-content: center; gap: 20px; list-style: none; padding: 0; margin: 0; }
-.movie-card { position: relative; width: 100%; border-radius: 5px; overflow: hidden; background-color: var(--secondary-black); cursor: pointer; transition: transform 0.3s; }
-.movie-card:hover { transform: scale(1.03); }
-.movie-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 63.48%, rgba(0, 0, 0, 0.9) 92.16%); pointer-events: none; z-index: 1; }
-.movie-card__poster { width: 100%; aspect-ratio: 280 / 406; object-fit: cover; display: block; }
-.movie-card__info { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; padding: 0; }
-.movie-card__title { font-size: 16px; font-weight: 500; color: #FFFFFF; margin: 0 0 6px 0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.movie-card__meta { display: flex; justify-content: space-between; align-items: center; }
-.movie-card__text { font-size: 12px; font-weight: 500; color: var(--text-dark-muted); }
-.movie-card__stars { display: flex; gap: 4px; align-items: center; }
-.movie-card__star { width: 14px; height: 14px; display: block; object-fit: contain; }
-
-/* OOPS & PAGINATION */
-.oops-message { text-align: center; color: var(--text-primary); padding: 80px 0; }
-.oops-title { font-size: 32px; margin: 0 0 10px 0; }
-.oops-text { font-size: 20px; margin: 0; line-height: 28px;}
-
-.pagination { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 40px; }
-.pagination__btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-light-strong); background: transparent; color: var(--grey); font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-.pagination__btn.active { background: var(--gradient-primary); color: var(--black); border: none; font-weight: 500; }
-.pagination__btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Light Theme Overrides */
-body.light-theme .search-input { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .custom-select__btn { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .custom-select__list { background: var(--white); border-color: var(--border-light-strong); }
-body.light-theme .custom-select__list li { color: var(--background); border-bottom-color: var(--border-light-soft); }
-body.light-theme .custom-select__list li:hover, body.light-theme .custom-select__list li.selected { background: var(--surface-white-soft); }
-body.light-theme .movie-card { background-color: var(--surface-white-soft); }
-body.light-theme .pagination__btn { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .pagination__btn.active { color: var(--black); }
-
-/* TABLET & DESKTOP (BREAKPOINTS) */
-@media screen and (min-width: 768px) {
-  .container { padding: 0 32px; }
-
-  .search-filter-form { flex-direction: row; align-items: center; justify-content: flex-start;}
-  .search-input-wrapper { width: 260px; }
-  .genre-select { width: 150px; flex: none; }
-  .year-select { width: 95px; flex: none; }
-  .search-btn { margin-left: 10px; }
-
-  .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .movie-card__poster { aspect-ratio: 224 / 325; }
+.catalog__wrapper {
+  display: flex;
+  justify-content: center; /* İçindeki formu yatay eksende merkeze kenetler */
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 20px; /* Alttaki film listesiyle arasında şık bir mesafe */
+}
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* KURAL: Sol ve sağ margin değerlerini 'auto' yaparak formu sayfa ortasına kilitleriz */
+  margin: 0 auto !important;
+  background: none;
+  box-shadow: none;
+  width: max-content; /* İçindeki elemanların toplam genişliği kadar yer kaplaması için */
+}
+/* Ortak Kutu Özellikleri (Giriş Kutusu Temel Yapısı) */
+.search-form__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid rgba(89, 89, 89, 1);
+  border-radius: 8px;
+  padding: 4px 12px;
+  height: 48px;
+  box-sizing: border-box;
 }
 
-@media screen and (min-width: 1280px) {
-  .search-input-wrapper { width: 315px; }
+/* ==========================================================================
+   2. BÖLÜM: ARAMA INPUT ALANI (KUTU 1)
+   ========================================================================== */
+.search-form__box--input {
+  width: 315px; /* İstenen net genişlik */
+  height: 48px; /* İstenen net yükseklik */
+  padding: 0 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
 
-  .movie-grid { grid-template-columns: repeat(3, 395px); gap: 32px 16px; }
-  .movie-card { width: 395px; height: 574px; }
-  .movie-card__poster { aspect-ratio: 395 / 574; }
-  .movie-card__info { left: 20px; bottom: 24px; right: 20px; }
-  .movie-card__title { font-size: 20px; margin-bottom: 8px;}
-  .movie-card__text { font-size: 14px; }
-  .movie-card__star { width: 18px; height: 18px; }
+.search-form__input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 16px;
+  color: #111111;
+  padding-right: 25px;
+  box-sizing: border-box;
+}
+
+/* Çarpı Temizleme Butonu */
+.search-form__clear-btn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%); /* Dikeyde milimetrik ortalama */
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #8c8c8c;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+}
+/* ==========================================================================
+   3. BÖLÜM: YIL SEÇİM ALANI (KUTU 2)
+   ========================================================================== */
+.search-form__box--year {
+  display: none; /* JavaScript veri girene kadar başlangıçta gizli */
+  width: 95px; /* İstenen net genişlik */
+  height: 48px; /* İstenen net yükseklik */
+  padding: 0; /* İçeriğin tam ortalanması için */
+  background-color: #ffffff;
+  border: 1px solid rgba(89, 89, 89, 1);
+  border-radius: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Inputa veri girildiğinde JS ile tetiklenen sınıf */
+.search-form__box--year.is-visible {
+  display: flex !important;
+}
+
+.custom-select {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tetikleyici Buton: Yazıyı ve SVG Oku Dikey/Yatay Tam Ortalar */
+.custom-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #595959;
+  cursor: pointer;
+  padding: 0 8px;
+  transition: transform 0.2s ease;
+}
+
+.custom-select__trigger.is-open .custom-select__arrow {
+  transform: rotate(180deg); /* Menü açılınca ok yukarı döner */
+}
+
+.custom-select__label {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   4. BÖLÜM: SABİT ODAKLI YIL ÇARKI (WHEEL PICKER)
+   ========================================================================== */
+.custom-select__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 95px;
+  background-color: #f5f5f5; /* Açık gri çark arka planı */
+  border: 1px solid rgba(89, 89, 89, 1);
+  border-radius: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  height: 160px; /* Menü yüksekliği sabit 4 satır */
+  overflow-y: scroll;
+  z-index: 10;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox için scrollbar gizleme */
+}
+
+.custom-select__options::-webkit-scrollbar {
+  display: none; /* Chrome/Safari için scrollbar gizleme */
+}
+
+.custom-select__option {
+  height: 40px; /* Sabit satır yüksekliği */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  color: #777777;
+  text-align: center;
+  scroll-snap-align: center;
+  box-sizing: border-box;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease,
+    font-weight 0.15s ease;
+}
+
+/* AKTİF MERKEZDEKİ ELEMANIN STİLİ */
+.custom-select__option.is-active {
+  transform: scale(1.3);
+  color: rgba(248, 119, 25, 1) !important; /* Canlı turuncu */
+  font-weight: bold;
+}
+
+.custom-select__option:hover {
+  color: rgba(248, 119, 25, 1);
+}
+
+.custom-select__spacer {
+  height: 120px;
+  pointer-events: none;
+}
+/* ==========================================================================
+   5. BÖLÜM: GRADIENT GÖNDER BUTONU (KUTU 3) & YARDIMCILAR
+   ========================================================================== */
+.search-form__submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #ffffff;
+  flex-shrink: 0;
+  /* İstediğiniz linear-gradient renk kodları */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 194, 38, 1) 0%,
+    rgba(248, 65, 25, 1) 100%
+  );
+  transition: transform 0.2s ease;
+}
+
+.search-form__submit-btn:hover {
+  transform: scale(1.05);
+}
+
+.hide {
+  display: none !important;
+}
+/* ==========================================================================
+   6. BÖLÜM: KATI KURAL FİLM IZGARASI VE GHOSTED KART TASARIMI
+   ========================================================================== */
+.catalog-movies-list {
+  display: grid;
+  grid-template-columns: repeat(3, 395px);
+  row-gap: 32px;
+  column-gap: 15px; /* 30px olan boşluğu 15px'e düşürerek yerden tasarruf ettik */
+  padding: 40px 0;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Film Kartı Ana Yapısı (Katı Boyut Sınırlandırması) */
+.movie-card {
+  position: relative;
+  /* KURAL 3: Kart boyutları ne olursa olsun bu değerleri aşamaz */
+  width: 395px;
+  height: 574px;
+  min-width: 395px;
+  max-width: 395px;
+  min-height: 574px;
+  max-height: 574px;
+
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-8px);
+}
+
+.movie-card__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Linear Gradient Koyu Geçiş Katmanı */
+.movie-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Üst taraf şeffaf, alt taraf tamamen siyah */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* İçeriği en alta yaslar */
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.movie-card__title {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+  font-family: sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.movie-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.movie-card__details {
+  color: #b3b3b3;
+  font-size: 15px;
+  font-family: sans-serif;
+}
+
+.movie-card__stars {
+  color: #ff6b00;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+/* ==========================================================================
+   7. BÖLÜM: HATA VE UYARI MESAJLARI (120PX AŞAĞIDA VE ORTALI)
+   ========================================================================== */
+.catalog-error-message,
+.catalog-loading {
+  grid-column: 1 / -1;
+  margin-top: 120px; /* KURAL: Buton grubundan tam 120px aşağıda başlasın */
+  text-align: center; /* KURAL: Yatayda tam ortalama (horizontal-align) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+.catalog-error-message h2 {
+  font-size: 32px;
+  color: rgba(248, 119, 25, 1);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.catalog-error-message p {
+  font-size: 18px;
+  color: #8c8c8c;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   8. BÖLÜM: FOTOĞRAFTAKİ ÖZEL SAYFALAMA (PAGINATION) TASARIMI
+   ========================================================================== */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 0 60px 0;
+  width: 100%;
+}
+
+.pagination-arrow {
+  background: none;
+  border: none;
+  color: #fdf9f9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  transition: color 0.2s ease;
+}
+
+.pagination-arrow:hover:not(:disabled) {
+  color: rgba(248, 65, 25, 1);
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Fotoğraftaki İnce Çember Numaralar */
+.pagination-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(89, 89, 89, 0.4);
+  border-radius: 50%;
+  background-color: transparent;
+  color: #faf8f8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.pagination-dots {
+  color: #f1ecec;
+  font-size: 14px;
+  letter-spacing: 2px;
+  padding: 0 4px;
+}
+
+/* 🔥 GÖRSELDEKİ SARI/TURUNCU GRADIENTLİ AKTİF SAYFA STİLİ */
+.pagination-btn.is-active {
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 194, 38, 1) 0%,
+    rgba(248, 65, 25, 1) 100%
+  );
+}
+
+.pagination-btn:hover:not(.is-active) {
+  border-color: rgba(248, 119, 25, 1);
+  color: rgba(248, 119, 25, 1);
+}
+
+/* Mobil Cihazlarda Taşmayı Önleyen Koruma */
+@media (max-width: 1260px) {
+  .catalog-movies-list {
+    grid-template-columns: repeat(auto-fit, 395px);
+  }
+}
+.catalog .container {
+  max-width: 1300px !important; /* 3 kartın rahatça sığması için genişliği artırdık */
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
 }

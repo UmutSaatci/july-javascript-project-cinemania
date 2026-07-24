@@ -1,72 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="./img/logo.svg" />
     <link rel="stylesheet" href="./css/variables.css" />
     <link rel="stylesheet" href="./css/reset.css" />
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/layout.css" />
     <link rel="stylesheet" href="./css/catalog.css" />
+
     <title>Cinemania - Catalog</title>
-</head>
-<body>
+  </head>
+  <body>
     <load src="./partials/header.html" />
 
     <main>
-        <load src="./partials/hero.html" />
+      <load src="./partials/hero.html" />
 
-        <section class="catalog-section">
-            <div class="container">
+      <section class="catalog">
+        <div class="container">
+          <div class="catalog__wrapper">
+            <form class="search-form" id="searchForm" autocomplete="off">
+              <!-- Arama Input Alanı -->
+              <div class="search-form__box search-form__box--input">
+                <input
+                  type="text"
+                  class="search-form__input"
+                  id="searchInput"
+                  placeholder="Search movies..."
+                  aria-label="Search movies"
+                />
+                <button
+                  class="search-form__clear-btn"
+                  type="button"
+                  id="clearBtn"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              </div>
 
-                <div class="search-filter-wrapper">
-                    <form class="search-filter-form" id="searchForm" autocomplete="off">
-
-                        <div class="search-input-wrapper">
-                            <input type="text" class="search-input" id="searchInput" placeholder="Search..." />
-                            <button class="searcher__clear" type="button" id="clearBtn" hidden>✕</button>
-                        </div>
-
-                        <select class="searcher__year-native" id="yearSelect" hidden aria-hidden="true" tabindex="-1">
-                            <option value="">Year</option>
-                        </select>
-
-                        <div id="yearSelectCustom" class="custom-select year-select">
-                            <button type="button" class="custom-select__btn" aria-label="Select Year" aria-expanded="false">
-                                <span class="custom-select__label">Year</span>
-                                <svg class="custom-select__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </button>
-                            <ul class="custom-select__list hide year-menu">
-                            </ul>
-                        </div>
-
-                        <button type="submit" class="search-btn" aria-label="Search">
-                            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="14" cy="14" r="10"></circle>
-                                <line x1="28" y1="28" x2="22" y2="22"></line>
-                            </svg>
-                        </button>
-                    </form>
+              <!-- Yıl Seçim Çarkı -->
+              <div
+                class="search-form__box search-form__box--year"
+                id="yearSelectWrapper"
+              >
+                <div id="yearSelectCustom" class="custom-select">
+                  <button
+                    type="button"
+                    class="custom-select__trigger"
+                    aria-expanded="false"
+                  >
+                    <span class="custom-select__label">Year</span>
+                    <svg
+                      class="custom-select__arrow"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <ul class="custom-select__options hide" id="yearMenu">
+                    <!-- JavaScript dinamik dolduracak -->
+                  </ul>
                 </div>
+              </div>
 
-                <div class="oops-message hidden" id="oopsMessage">
-                    <p class="oops-title">OOPS...</p>
-                    <p class="oops-text">We are very sorry!</p>
-                    <p class="oops-text">We don’t have any results matching your search.</p>
-                </div>
+              <!-- Gönder Butonu -->
+              <button
+                type="submit"
+                class="search-form__submit-btn"
+                aria-label="Submit Search"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="14" cy="14" r="10"></circle>
+                  <line x1="28" y1="28" x2="22" y2="22"></line>
+                </svg>
+              </button>
+            </form>
+          </div>
 
-                <ul class="movie-grid" id="movieGrid"></ul>
+          <div class="catalog-movies-list"></div>
 
-                <div class="pagination" id="pagination">
-                </div>
-            </div>
-        </section>
+          <!-- Filmlerin listelendiği mevcut diviniz -->
+          <div class="catalog-movies-list"></div>
+
+          <!-- 🔥 EKSİK OLAN SAYFALAMA ALANI (BURAYI AYNEN YAPIŞTIRIN) -->
+          <div
+            class="pagination-container"
+            id="paginationWrapper"
+            style="display: none"
+          >
+            <!-- Sol Ok Butonu -->
+            <button
+              type="button"
+              class="pagination-arrow"
+              id="prevPageBtn"
+              aria-label="Previous page"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+
+            <!-- Dinamik Sayfa Numaralarının Geleceği Yer -->
+            <div class="pagination-numbers" id="paginationNumbers"></div>
+
+            <!-- Sağ Ok Butonu -->
+            <button
+              type="button"
+              class="pagination-arrow"
+              id="nextPageBtn"
+              aria-label="Next page"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <load src="./partials/footer.html" />
     <load src="./partials/modal.html" />
     <load src="./partials/loader.html" />
     <script type="module" src="./js/catalog.js"></script>
-</body>
+  </body>
 </html>
