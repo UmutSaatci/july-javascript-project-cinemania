@@ -1,5 +1,11 @@
 import { getTrending, getUpcoming, getMovieDetails } from './api.js';
 
+const showGlobalLoader = () => console.log('Yükleniyor...');
+const hideGlobalLoader = () => console.log('Yükleme bitti.');
+const generateStarIconsMarkup = () => '<span style="color:orange;">★</span>';
+const isMovieSaved = () => false;
+const saveMovieToLibrary = () => {};
+const removeMovieFromLibrary = () => {};
 
 const weeklyList = document.getElementById('weeklyList');
 const upcomingWrapper = document.getElementById('upcomingWrapper');
@@ -7,10 +13,7 @@ const upcomingWrapper = document.getElementById('upcomingWrapper');
 export async function initHome() {
   showGlobalLoader();
   try {
-    await Promise.allSettled([
-      renderWeeklyTrends(),
-      renderUpcoming()
-    ]);
+    await Promise.allSettled([renderWeeklyTrends(), renderUpcoming()]);
   } catch (err) {
     console.error(err);
   } finally {
@@ -23,15 +26,23 @@ async function renderWeeklyTrends() {
   const data = await getTrending('week');
   const movies = data.results.slice(0, 3);
 
-  const markup = await Promise.all(movies.map(async movie => {
-    const rating = movie.vote_average || 0;
-    const starRatingHtml = generateStarIconsMarkup(rating, 'movie-card__star');
-    const poster = movie.poster_path
-      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      : './img/oops-logo.png';
-    const year = movie.release_date ? movie.release_date.slice(0, 4) : (movie.first_air_date ? movie.first_air_date.slice(0, 4) : '—');
+  const markup = await Promise.all(
+    movies.map(async movie => {
+      const rating = movie.vote_average || 0;
+      const starRatingHtml = generateStarIconsMarkup(
+        rating,
+        'movie-card__star'
+      );
+      const poster = movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : './img/oops-logo.png';
+      const year = movie.release_date
+        ? movie.release_date.slice(0, 4)
+        : movie.first_air_date
+          ? movie.first_air_date.slice(0, 4)
+          : '—';
 
-    return `
+      return `
       <li class="movie-card" data-id="${movie.id}">
         <div class="movie-card__thumb">
           <img class="movie-card__img" src="${poster}" alt="${movie.title || movie.name}" loading="lazy" />
@@ -46,13 +57,15 @@ async function renderWeeklyTrends() {
         </div>
       </li>
     `;
-  }));
+    })
+  );
 
   weeklyList.innerHTML = markup.join('');
 
-  weeklyList.querySelectorAll('.movie-card').forEach(card => {
+  const cardElements = weeklyList.querySelectorAll('.movie-card');
+  cardElements.forEach((card, index) => {
     card.addEventListener('click', () => {
-      showMovieSpotlight(card.dataset.id);
+      console.log('Seçilen Film:', movies[index]);
     });
   });
 }
@@ -66,13 +79,17 @@ async function renderUpcoming() {
   const randomIndex = Math.floor(Math.random() * Math.min(movies.length, 10));
   const movie = movies[randomIndex];
   const details = await getMovieDetails(movie.id);
-  
+
   const rating = details.vote_average || 0;
   const poster = details.poster_path
     ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
     : './img/oops-logo.png';
   const releaseDate = details.release_date || '—';
-  const genres = details.genres.map(g => g.name).slice(0, 2).join(', ') || '—';
+  const genres =
+    details.genres
+      .map(g => g.name)
+      .slice(0, 2)
+      .join(', ') || '—';
 
   upcomingWrapper.innerHTML = `
     <div class="upcoming__poster">
@@ -116,5 +133,3 @@ async function renderUpcoming() {
     updateBtnState();
   });
 }
-
-
