@@ -1,10 +1,11 @@
 import { initHeader } from './header.js';
 import { initHero } from './hero.js';
-import { getTrendingPaged, searchMovies, convertGenreIdsToNames } from './api.js';
-import { showMovieSpotlight } from './movie-spotlight.js';
-import { generateStarIconsMarkup } from './star-icons.js';
-import { showGlobalLoader, hideGlobalLoader, initGlobalUi } from './ui.js';
-
+i
+import {
+  getTrendingPaged,
+  searchMovies,
+  convertGenreIdsToNames,
+} from './api.js';
 let movieGrid;
 let oopsMessage;
 let pagination;
@@ -26,7 +27,8 @@ let isSearching = false;
 
 function showLoader() {
   if (movieGrid) {
-    movieGrid.innerHTML = '<li class="global-loader__spinner" style="margin: 40px auto; display: block;"></li>';
+    movieGrid.innerHTML =
+      '<li class="global-loader__spinner" style="margin: 40px auto; display: block;"></li>';
   }
   if (oopsMessage) oopsMessage.classList.add('hidden');
 }
@@ -140,7 +142,7 @@ function initYearCustomSelect() {
   syncYearSelect(yearSelect.value, 'Year');
   toggleYearSelect(false);
 
-  yearSelectButton.addEventListener('click', (e) => {
+  yearSelectButton.addEventListener('click', e => {
     e.stopPropagation();
     const isOpen = !yearSelectList.classList.contains('hide');
     toggleYearSelect(!isOpen);
@@ -179,14 +181,17 @@ function scrollToCatalog() {
 
 async function renderMovies(movies) {
   if (!movieGrid) return;
-  const markup = await Promise.all(movies.map(async movie => {
-    const genres = await convertGenreIdsToNames(movie.genre_ids || []);
-    const year = movie.release_date ? movie.release_date.slice(0, 4) : '—';
-    const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : './img/oops-logo.png';
-    const rating = movie.vote_average || 0;
-    const starsHtml = generateStarIconsMarkup(rating, 'movie-card__star');
+  const markup = await Promise.all(
+    movies.map(async movie => {
+      const genres = await convertGenreIdsToNames(movie.genre_ids || []);
+      const year = movie.release_date ? movie.release_date.slice(0, 4) : '—';
+      const poster = movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : './img/oops-logo.png';
+      const rating = movie.vote_average || 0;
+      const starsHtml = generateStarIconsMarkup(rating, 'movie-card__star');
 
-    return `
+      return `
       <li class="movie-card" data-id="${movie.id}">
         <img src="${poster}" alt="${movie.title}" class="movie-card__poster" loading="lazy" />
         <div class="movie-card__info">
@@ -198,7 +203,8 @@ async function renderMovies(movies) {
         </div>
       </li>
     `;
-  }));
+    })
+  );
 
   movieGrid.innerHTML = markup.join('');
 }
@@ -291,7 +297,7 @@ async function bootstrapCatalogPage() {
   }
 
   if (searchForm) {
-    searchForm.addEventListener('submit', (e) => {
+    searchForm.addEventListener('submit', e => {
       e.preventDefault();
       const query = searchInput.value.trim();
       const year = yearSelect.value;
