@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/layout.css" />
     <link rel="stylesheet" href="./css/catalog.css" />
-
     <title>Cinemania - Catalog</title>
   </head>
   <body>
@@ -22,7 +21,7 @@
         <div class="container">
           <div class="catalog__wrapper">
             <form class="search-form" id="searchForm" autocomplete="off">
-              <!-- Arama Input Alanı -->
+              <!-- 1. Kutu: Ana Arama Giriş Alanı -->
               <div class="search-form__box search-form__box--input">
                 <input
                   type="text"
@@ -31,17 +30,40 @@
                   placeholder="Search movies..."
                   aria-label="Search movies"
                 />
+                <!-- Masaüstü Çarpı Butonu -->
                 <button
                   class="search-form__clear-btn"
                   type="button"
-                  id="clearBtn"
+                  id="clearBtnDesktop"
                   aria-label="Clear search"
                 >
                   ✕
                 </button>
               </div>
 
-              <!-- Yıl Seçim Çarkı -->
+              <!-- 2. Kutu: Sadece Mobilde Değer Girilince Açılan Klon Input -->
+              <div
+                class="search-form__box search-form__box--clone"
+                id="mobileCloneBox"
+              >
+                <input
+                  type="text"
+                  class="search-form__input-clone"
+                  id="searchClone"
+                  readonly
+                />
+                <!-- Mobil Çarpı Butonu -->
+                <button
+                  class="search-form__clear-btn"
+                  type="button"
+                  id="clearBtnMobile"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <!-- 3. Kutu: Yıl Seçim Çarkı -->
               <div
                 class="search-form__box search-form__box--year"
                 id="yearSelectWrapper"
@@ -71,7 +93,7 @@
                 </div>
               </div>
 
-              <!-- Gönder Butonu -->
+              <!-- 4. Kutu: Gönder Butonu -->
               <button
                 type="submit"
                 class="search-form__submit-btn"
@@ -94,18 +116,15 @@
             </form>
           </div>
 
+          <!-- Film Listesi -->
           <div class="catalog-movies-list"></div>
 
-          <!-- Filmlerin listelendiği mevcut diviniz -->
-          <div class="catalog-movies-list"></div>
-
-          <!-- 🔥 EKSİK OLAN SAYFALAMA ALANI (BURAYI AYNEN YAPIŞTIRIN) -->
+          <!-- Sayfalama (Pagination) Alanı -->
           <div
             class="pagination-container"
             id="paginationWrapper"
             style="display: none"
           >
-            <!-- Sol Ok Butonu -->
             <button
               type="button"
               class="pagination-arrow"
@@ -123,11 +142,7 @@
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
-
-            <!-- Dinamik Sayfa Numaralarının Geleceği Yer -->
             <div class="pagination-numbers" id="paginationNumbers"></div>
-
-            <!-- Sağ Ok Butonu -->
             <button
               type="button"
               class="pagination-arrow"

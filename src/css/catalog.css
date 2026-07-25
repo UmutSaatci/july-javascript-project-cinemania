@@ -1,27 +1,24 @@
 /* ==========================================================================
-   1. GENEL RESET VE FORM KAPSAYICI DÜZENİ
+   VARSAYILAN MOBİL DÜZENİ (320px - 1199px) [MOBILE FIRST]
    ========================================================================== */
-.catalog {
-  padding-top: 80px;
-}
 .catalog__wrapper {
   display: flex;
-  justify-content: center; /* İçindeki formu yatay eksende merkeze kenetler */
+  justify-content: center;
   width: 100%;
   box-sizing: border-box;
-  padding-bottom: 20px; /* Alttaki film listesiyle arasında şık bir mesafe */
+  padding-bottom: 20px;
 }
+
 .search-form {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  /* KURAL: Sol ve sağ margin değerlerini 'auto' yaparak formu sayfa ortasına kilitleriz */
+  flex-wrap: wrap; /* Mobilde sığmayan kutuları alta kırar */
+  padding-top: 40px;
+  gap: 12px;
+  width: 100%;
+  max-width: 395px;
   margin: 0 auto !important;
-  background: none;
-  box-shadow: none;
-  width: max-content; /* İçindeki elemanların toplam genişliği kadar yer kaplaması için */
 }
-/* Ortak Kutu Özellikleri (Giriş Kutusu Temel Yapısı) */
+
 .search-form__box {
   position: relative;
   display: flex;
@@ -29,40 +26,57 @@
   background-color: #ffffff;
   border: 1px solid rgba(89, 89, 89, 1);
   border-radius: 8px;
-  padding: 4px 12px;
   height: 48px;
   box-sizing: border-box;
 }
 
-/* ==========================================================================
-   2. BÖLÜM: ARAMA INPUT ALANI (KUTU 1)
-   ========================================================================== */
 .search-form__box--input {
-  width: 315px; /* İstenen net genişlik */
-  height: 48px; /* İstenen net yükseklik */
+  width: calc(100% - 60px); /* Büyüteç butonunun yanına sığması için */
   padding: 0 16px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+  order: 3; /* Mobilde her zaman en altta durur */
 }
 
-.search-form__input {
+.search-form__box--clone {
+  display: none;
+  width: calc(100% - 107px); /* Yanına yıl çarkı sığması için */
+  padding: 0 40px 0 16px;
+  background-color: #f9f9f9;
+  order: 1; /* Mobilde üst satıra geçer */
+}
+
+.search-form__box--clone.is-active {
+  display: flex !important;
+}
+
+.search-form__input,
+.search-form__input-clone {
   width: 100%;
   height: 100%;
   border: none;
   background: transparent;
   outline: none;
-  font-size: 16px;
+  font-size: 15px;
   color: #111111;
-  padding-right: 25px;
-  box-sizing: border-box;
 }
 
-/* Çarpı Temizleme Butonu */
+.search-form__box--year {
+  display: none;
+  width: 95px !important;
+  height: 48px !important;
+  padding: 0;
+  flex-shrink: 0;
+  order: 2; /* Mobilde üst satırda inputun yanına geçer */
+}
+
+.search-form__box--year.is-visible {
+  display: flex !important;
+}
+
 .search-form__clear-btn {
   position: absolute;
   right: 16px;
   top: 50%;
-  transform: translateY(-50%); /* Dikeyde milimetrik ortalama */
+  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 16px;
@@ -70,37 +84,40 @@
   cursor: pointer;
   display: none;
   padding: 4px;
-}
-/* ==========================================================================
-   3. BÖLÜM: YIL SEÇİM ALANI (KUTU 2)
-   ========================================================================== */
-.search-form__box--year {
-  display: none; /* JavaScript veri girene kadar başlangıçta gizli */
-  width: 95px; /* İstenen net genişlik */
-  height: 48px; /* İstenen net yükseklik */
-  padding: 0; /* İçeriğin tam ortalanması için */
-  background-color: #ffffff;
-  border: 1px solid rgba(89, 89, 89, 1);
-  border-radius: 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+  z-index: 5;
 }
 
-/* Inputa veri girildiğinde JS ile tetiklenen sınıf */
-.search-form__box--year.is-visible {
-  display: flex !important;
+.search-form__submit-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 194, 38, 1) 0%,
+    rgba(248, 65, 25, 1) 100%
+  );
+  color: #ffffff;
+  order: 4;
+  cursor: pointer;
 }
-
+.search-form__submit-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgb(236, 236, 234) 0%,
+    rgb(245, 242, 242) 100%
+  );
+  color: rgba(248, 65, 25, 1);
+}
+/* ÇARK İÇ TASARIMLARI */
 .custom-select {
   width: 100%;
   height: 100%;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
-
-/* Tetikleyici Buton: Yazıyı ve SVG Oku Dikey/Yatay Tam Ortalar */
 .custom-select__trigger {
   display: flex;
   align-items: center;
@@ -113,131 +130,122 @@
   font-size: 15px;
   color: #595959;
   cursor: pointer;
-  padding: 0 8px;
-  transition: transform 0.2s ease;
 }
-
 .custom-select__trigger.is-open .custom-select__arrow {
-  transform: rotate(180deg); /* Menü açılınca ok yukarı döner */
+  transform: rotate(180deg);
 }
-
-.custom-select__label {
-  flex-shrink: 0;
-}
-
-/* ==========================================================================
-   4. BÖLÜM: SABİT ODAKLI YIL ÇARKI (WHEEL PICKER)
-   ========================================================================== */
 .custom-select__options {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
-  min-width: 95px;
-  background-color: #f5f5f5; /* Açık gri çark arka planı */
+  background-color: #f5f5f5;
   border: 1px solid rgba(89, 89, 89, 1);
-  border-radius: 16px;
+  border-radius: 8px;
   list-style: none;
   padding: 0;
   margin: 4px 0 0 0;
-  height: 160px; /* Menü yüksekliği sabit 4 satır */
+  height: 160px;
   overflow-y: scroll;
   z-index: 10;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox için scrollbar gizleme */
+  scrollbar-width: none;
+
+  /* 🔥 CRITICAL FIX: Üst kapsayıcı flex olsa bile listenin başlangıçta kapalı kalmasını sağlar */
+  display: none !important;
 }
 
+/* 2. Sadece ve sadece .hide sınıfı ORTADAN KALKTIĞINDA listeyi flex yaparak ekrana bas diyoruz */
+.custom-select__options:not(.hide) {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* 3. Yardımcı gizleme sınıfının gücünü en üst seviyeye çıkartıyoruz */
+.hide {
+  display: none !important;
+}
+
+/* 4. Mobilde yıl kutusu görünür olduğunda sadece BUTON kapsayıcısını aç, alt listeyi değil */
+.search-form__box--year.is-visible {
+  display: flex !important;
+}
 .custom-select__options::-webkit-scrollbar {
-  display: none; /* Chrome/Safari için scrollbar gizleme */
+  display: none;
 }
-
+/* ==========================================================================
+   YIL ÇARK SATIRLARI - SOFT VE ODDAKLANMA EFEKTİ YENİDEN KAZANDIRILDI
+   ========================================================================== */
 .custom-select__option {
   height: 40px; /* Sabit satır yüksekliği */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 15px;
-  color: #777777;
+
+  /* Varsayılan (Odak Dışı) Soft Görünüm */
+  font-size: 14px;
+  color: #a0a0a0; /* Kenarlarda kalan yıllar daha silik ve soft durur */
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 2em;
+
   text-align: center;
   scroll-snap-align: center;
   box-sizing: border-box;
+
+  /* Büyüme ve renk değişiminin milimetrik yumuşaklıkta (soft) akması için */
   transition:
-    transform 0.15s ease,
-    color 0.15s ease,
-    font-weight 0.15s ease;
+    transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    color 0.2s ease,
+    font-weight 0.2s ease,
+    background-color 0.2s ease;
 }
 
-/* AKTİF MERKEZDEKİ ELEMANIN STİLİ */
+/* 🔥 FOCUS / ACTIVE MANTIĞI: Sadece tam ortada kilitlenen yıl öne çıkar */
 .custom-select__option.is-active {
-  transform: scale(1.3);
-  color: rgba(248, 119, 25, 1) !important; /* Canlı turuncu */
-  font-weight: bold;
+  transform: scale(1.25); /* Ortadaki eleman yumuşakça büyür */
+  color: rgba(248, 119, 25, 1) !important; /* Sizin canlı turuncu renginiz */
+  font-weight: 700; /* Yazı kalınlaşır */
+  background-color: rgba(
+    248,
+    119,
+    25,
+    0.05
+  ); /* Arkasına çok hafif, şık bir turuncu parlama ekledik */
+  border-radius: 8px; /* Parlamanın kenarları hafif oval olur */
 }
 
-.custom-select__option:hover {
-  color: rgba(248, 119, 25, 1);
+/* HOVER EFEKTİ: Fareyle gezerken anlık soft turuncu tepki */
+.custom-select__option:hover:not(.is-active) {
+  color: rgba(248, 119, 25, 0.7);
+  font-weight: 500;
 }
 
-.custom-select__spacer {
-  height: 120px;
-  pointer-events: none;
-}
-/* ==========================================================================
-   5. BÖLÜM: GRADIENT GÖNDER BUTONU (KUTU 3) & YARDIMCILAR
-   ========================================================================== */
-.search-form__submit-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  color: #ffffff;
-  flex-shrink: 0;
-  /* İstediğiniz linear-gradient renk kodları */
-  background: linear-gradient(
-    135deg,
-    rgba(255, 194, 38, 1) 0%,
-    rgba(248, 65, 25, 1) 100%
-  );
-  transition: transform 0.2s ease;
-}
-
-.search-form__submit-btn:hover {
-  transform: scale(1.05);
-}
-
-.hide {
-  display: none !important;
-}
-/* ==========================================================================
-   6. BÖLÜM: KATI KURAL FİLM IZGARASI VE GHOSTED KART TASARIMI
-   ========================================================================== */
-.catalog-movies-list {
-  display: grid;
-  grid-template-columns: repeat(3, 395px);
-  row-gap: 32px;
-  column-gap: 15px; /* 30px olan boşluğu 15px'e düşürerek yerden tasarruf ettik */
-  padding: 40px 0;
-  justify-content: center;
+/* KAPSAYICI VE FILM IZGARASI (MOBİL) */
+.catalog .container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
   box-sizing: border-box;
 }
 
-/* Film Kartı Ana Yapısı (Katı Boyut Sınırlandırması) */
+.catalog-movies-list {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobilde tek kolon */
+  row-gap: 32px;
+  padding: 40px 0;
+  justify-items: center;
+  width: 100%;
+}
+
 .movie-card {
   position: relative;
-  /* KURAL 3: Kart boyutları ne olursa olsun bu değerleri aşamaz */
-  width: 395px;
-  height: 574px;
-  min-width: 395px;
-  max-width: 395px;
-  min-height: 574px;
-  max-height: 574px;
-
+  width: 100%;
+  max-width: 224px; /* Yeni kibar genişlik sınırı */
+  height: 325px; /* İstediğiniz net yükseklik */
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
@@ -245,159 +253,137 @@
 }
 
 .movie-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
-
 .movie-card__poster {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-
-/* Linear Gradient Koyu Geçiş Katmanı */
 .movie-card__overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Üst taraf şeffaf, alt taraf tamamen siyah */
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0) 30%,
     rgba(0, 0, 0, 1) 100%
   );
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* İçeriği en alta yaslar */
-  padding: 24px;
+  justify-content: flex-end;
+  /* 🔥 KURAL 1: İçindeki tüm metin bloklarının en soldan başlamasını garanti eder */
+  align-items: flex-start;
+  padding: 16px;
   box-sizing: border-box;
 }
 
 .movie-card__title {
   color: #ffffff;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
   text-transform: uppercase;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   font-family: sans-serif;
   letter-spacing: 0.5px;
+  /* 🔥 KURAL 2: Başlığın kendi hizalamasını da sola çekiyoruz */
+  text-align: left;
+  width: 100%;
 }
 
+/* Alt Bilgi Satırı (Tür, Yıl solda alt alta; yıldızlar sağda kalacak şekilde optimize edildi) */
 .movie-card__meta {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; /* Yazıları sola, yıldızları sağa yaslar */
+  align-items: flex-end; /* Yıldızlar ile yazının alt tabanını eşitler */
+  width: 100%;
 }
 
 .movie-card__details {
   color: #b3b3b3;
-  font-size: 15px;
+  font-size: 12px;
   font-family: sans-serif;
+  /* 🔥 KURAL 3: Detay yazılarının (Tür ve Yıl) sola yaslanması ve alt alta durması için */
+  text-align: left;
+  display: flex;
+  flex-direction: column; /* Eğer yazı iki satıra bölünürse alt alta kalması için */
+  gap: 2px;
 }
 
 .movie-card__stars {
   color: #ff6b00;
-  font-size: 16px;
-  letter-spacing: 2px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  flex-shrink: 0; /* Yıldızların sıkışıp daralmasını önler */
 }
-/* ==========================================================================
-   7. BÖLÜM: HATA VE UYARI MESAJLARI (120PX AŞAĞIDA VE ORTALI)
-   ========================================================================== */
+
+/* HATA MESAJLARI VE MOBİL SAYFALAMA */
 .catalog-error-message,
 .catalog-loading {
   grid-column: 1 / -1;
-  margin-top: 120px; /* KURAL: Buton grubundan tam 120px aşağıda başlasın */
-  text-align: center; /* KURAL: Yatayda tam ortalama (horizontal-align) */
+  margin-top: 120px;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   font-family: sans-serif;
-  box-sizing: border-box;
 }
-
 .catalog-error-message h2 {
   font-size: 32px;
   color: rgba(248, 119, 25, 1);
   margin-bottom: 12px;
-  font-weight: 700;
 }
-
 .catalog-error-message p {
   font-size: 18px;
   color: #8c8c8c;
-  max-width: 500px;
-  line-height: 1.6;
 }
 
-/* ==========================================================================
-   8. BÖLÜM: FOTOĞRAFTAKİ ÖZEL SAYFALAMA (PAGINATION) TASARIMI
-   ========================================================================== */
 .pagination-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 40px 0 60px 0;
+  gap: 8px;
+  padding: 30px 0 50px 0;
   width: 100%;
 }
-
 .pagination-arrow {
   background: none;
   border: none;
-  color: #fdf9f9;
-  cursor: pointer;
+  color: #f8f5f5;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  transition: color 0.2s ease;
 }
-
-.pagination-arrow:hover:not(:disabled) {
-  color: rgba(248, 65, 25, 1);
-}
-
-.pagination-arrow:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
 .pagination-numbers {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
-
-/* Fotoğraftaki İnce Çember Numaralar */
 .pagination-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(89, 89, 89, 0.4);
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(252, 248, 248, 0.4);
   border-radius: 50%;
   background-color: transparent;
-  color: #faf8f8;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
+  color: #fdf9f9;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  cursor: pointer;
 }
-
 .pagination-dots {
-  color: #f1ecec;
-  font-size: 14px;
-  letter-spacing: 2px;
-  padding: 0 4px;
+  color: #fcfbfb;
+  font-size: 12px;
+  padding: 0 2px;
 }
-
-/* 🔥 GÖRSELDEKİ SARI/TURUNCU GRADIENTLİ AKTİF SAYFA STİLİ */
 .pagination-btn.is-active {
   border: none;
   color: #ffffff;
@@ -409,20 +395,180 @@
   );
 }
 
-.pagination-btn:hover:not(.is-active) {
-  border-color: rgba(248, 119, 25, 1);
-  color: rgba(248, 119, 25, 1);
-}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .catalog .container {
+    max-width: 740px !important; /* Tablet ekran sınırına göre genişlik */
+    margin: 0 auto !important;
+  }
+  .search-form {
+    padding-top: 80px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-width: 700px;
+    width: max-content; /* Kutunun gereksiz uzayıp sola kaymasını önler */
+    gap: 16px;
+    margin: 0 auto !important; /* Sol ve sağ boşluğu eşit dağıtarak ortalar */
+  }
 
-/* Mobil Cihazlarda Taşmayı Önleyen Koruma */
-@media (max-width: 1260px) {
+  /* Masaüstünde klon kutu imha edilir */
+  .search-form__box--clone,
+  #mobileCloneBox {
+    display: none !important;
+  }
+
+  /* Giriş kutusu sola yanaşır */
+  .search-form__box--input {
+    width: 315px !important;
+    flex: none;
+    order: 1 !important;
+  }
+
+  /* Çark tam sağa (input yanına) yerleşir */
+  .search-form__box--year {
+    display: flex !important;
+    position: relative;
+    order: 2 !important;
+  }
+  .search-form__submit-btn {
+    order: 3 !important;
+  }
+
+  /* 🔥 KURAL: Tablette kartlar yan yana dizilir, boyutları 224x325px kalır */
   .catalog-movies-list {
-    grid-template-columns: repeat(auto-fit, 395px);
+    display: grid !important;
+    grid-template-columns: repeat(
+      3,
+      224px
+    ) !important; /* Yan yana 3 adet kibar kart */
+    grid-auto-rows: 325px !important; /* Net 325px yükseklik */
+    column-gap: 16px;
+    row-gap: 28px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Kartın kendi sınırlarını tablet için 224x325px boyutuna kilitliyoruz */
+  .movie-card {
+    width: 224px !important;
+    height: 325px !important;
+    min-width: 224px !important;
+    max-width: 224px !important;
+    min-height: 325px !important;
+    max-height: 325px !important;
+    border-radius: 12px;
+  }
+
+  /* Tablette yazı boyutlarının küçük kalmasını sağlıyoruz */
+  .movie-card__overlay {
+    padding: 16px;
+  }
+  .movie-card__title {
+    font-size: 15px;
+    margin: 0 0 6px 0;
+  }
+  .movie-card__details {
+    font-size: 12px;
+  }
+  .movie-card__stars {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  /* Masaüstünde sayfalama normal boyutuna (40px) döner */
+  .pagination-btn,
+  .pagination-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
   }
 }
-.catalog .container {
-  max-width: 1300px !important; /* 3 kartın rahatça sığması için genişliği artırdık */
-  width: 100% !important;
-  margin: 0 auto !important;
-  padding: 0 20px !important;
+
+/* ==========================================================================
+   MASAÜSTÜ GEÇİŞ DÜZENİ (1200px ve Üzeri) [DESKTOP]
+   ========================================================================== */
+@media (min-width: 1200px) {
+  /* 1. Üç büyük kartın yan yana sığabilmesi için container alanını genişletiyoruz */
+  .catalog .container {
+    max-width: 1300px !important;
+    width: 100% !important;
+  }
+
+  .search-form {
+    padding-top: 80px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-width: 700px;
+    width: max-content; /* Kutunun gereksiz uzayıp sola kaymasını önler */
+    gap: 16px;
+    margin: 0 auto !important; /* Sol ve sağ boşluğu eşit dağıtarak ortalar */
+  }
+
+  .search-form__box--clone,
+  #mobileCloneBox {
+    display: none !important;
+  }
+
+  .search-form__box--input {
+    width: 315px !important;
+    flex: none;
+    order: 1 !important;
+  }
+
+  .search-form__box--year {
+    display: flex !important;
+    position: relative;
+    order: 2 !important;
+  }
+
+  .search-form__submit-btn {
+    order: 3 !important;
+  }
+
+  /* 🔥 KATI KURAL: İstediğiniz 395x574px ölçüleri buraya kusursuz entegre edildi */
+  .catalog-movies-list {
+    display: grid !important;
+    grid-template-columns: repeat(3, 395px) !important; /* Net 395px genişlik */
+    grid-auto-rows: 574px !important; /* Net 574px yükseklik */
+    column-gap: 16px;
+    row-gap: 28px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Kartın kendi sınırlarını da bu büyük boyutlara kilitliyoruz */
+  .movie-card {
+    width: 395px !important;
+    height: 574px !important;
+    min-width: 395px !important;
+    max-width: 395px !important;
+    min-height: 574px !important;
+    max-height: 574px !important;
+    border-radius: 16px; /* Kart büyüdüğü için köşeleri yeniden 16px yapıyoruz */
+  }
+
+  /* Büyük kartta başlık ve yıldız boyutlarını yeniden şık ve dengeli hale getiriyoruz */
+  .movie-card__overlay {
+    padding: 24px; /* İç boşluğu kart boyutuna göre artırdık */
+  }
+
+  .movie-card__title {
+    font-size: 20px; /* Başlık yazı boyutu büyük karta göre dengelendi */
+    margin: 0 0 8px 0;
+  }
+
+  .movie-card__details {
+    font-size: 15px; /* Detay yazıları dengelendi */
+  }
+
+  .movie-card__stars {
+    font-size: 16px; /* Yıldızlar dengelendi */
+    letter-spacing: 2px;
+  }
+  /* Masaüstünde sayfalama normal boyutuna (40px) döner */
+  .pagination-btn,
+  .pagination-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
 }
