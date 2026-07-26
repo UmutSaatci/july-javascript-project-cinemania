@@ -1,5 +1,3 @@
-import { reportError } from './logger.js';
-
 export const SAVED_MOVIES_KEY = 'cinemania-saved-movies';
 
 // localStoragede kayıtlı filmleri getir
