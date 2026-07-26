@@ -4,8 +4,7 @@ import './footer.js';
 import { hideGlobalLoader, initGlobalUi, showGlobalLoader } from './uz.js';
 import { convertGenreIdsToNames, getGenres } from './api.js';
 import { readSavedMovies } from './library-storage.js';
-import { showMovieSpotlight } from './movie-spotlight.js';
-import { generateStarIconsMarkup } from './star-icons.js';
+import { showMovieSpotlight } from './movie-card.js';
 
 let allMovies = [];
 let filteredMovies = [];
