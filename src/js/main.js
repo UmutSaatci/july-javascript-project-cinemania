@@ -25,3 +25,7 @@ if (document.readyState === 'loading') {
 } else {
   bootstrapPage();
 }
+// movie-card.js dosyasındaki import hatasını çözen export:
+export function openMovieModal(movie) {
+  console.log('Modal açılıyor:', movie);
+}
