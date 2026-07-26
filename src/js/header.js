@@ -64,6 +64,9 @@ function initThemeToggle() {
 
     document.body.classList.toggle('light-theme', willUseLightTheme);
     toggle.classList.toggle('active', willUseLightTheme);
-    localStorage.setItem(THEME_STORAGE_KEY, willUseLightTheme ? 'light' : 'dark');
+    localStorage.setItem(
+      THEME_STORAGE_KEY,
+      willUseLightTheme ? 'light' : 'dark'
+    );
   });
 }

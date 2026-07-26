@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="./css/layout.css" />
     <link rel="stylesheet" href="./css/catalog.css" />
     <title>Cinemania - Catalog</title>
+
+    <!-- Ekran parlamasını engelleyen inline script -->
+    <script>
+      if (localStorage.getItem('cinemania-theme') === 'light') {
+        document.documentElement.classList.add('light-theme'); // veya document.body
+      }
+    </script>
   </head>
   <body>
     <load src="./partials/header.html" />
@@ -168,6 +175,10 @@
     <load src="./partials/footer.html" />
     <load src="./partials/modal.html" />
     <load src="./partials/loader.html" />
+    <script type="module">
+      import { initHeader } from './js/header.js'; // header.js yolunu doğru yazın
+      initHeader();
+    </script>
     <script type="module" src="./js/catalog.js"></script>
   </body>
 </html>
