@@ -1,7 +1,7 @@
 import { initHeader } from './header.js';
 import { initHero } from './hero.js';
 import './footer.js';
-import { hideGlobalLoader, initGlobalUi, showGlobalLoader } from './ui.js';
+import { hideGlobalLoader, initGlobalUi, showGlobalLoader } from './uz.js';
 import { convertGenreIdsToNames, getGenres } from './api.js';
 import { readSavedMovies } from './library-storage.js';
 import { showMovieSpotlight } from './movie-spotlight.js';
