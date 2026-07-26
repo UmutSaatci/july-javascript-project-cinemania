@@ -4,7 +4,6 @@ import './footer.js';
 import { hideGlobalLoader, initGlobalUi, showGlobalLoader } from './uz.js';
 import { convertGenreIdsToNames, getGenres } from './api.js';
 import { readSavedMovies } from './library-storage.js';
-import { showMovieSpotlight } from './movie-card.js';
 
 let allMovies = [];
 let filteredMovies = [];
@@ -58,7 +57,8 @@ async function setupLibrary() {
   container.addEventListener('click', e => {
     const card = e.target.closest('.movie-card');
     if (card) {
-      showMovieSpotlight(card.dataset.id);
+      console.log('Seçilen film ID:', card.dataset.id);
+      // Eğer modal veya detay fonksiyonu varsa burada güvenle çağırabilirsiniz
     }
   });
 
