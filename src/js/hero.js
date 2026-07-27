@@ -1,4 +1,4 @@
-import { getTrending } from "./api.js";
+import { getTrending } from './api.js';
 const MOBILE_TABLET_MAX_WIDTH = 1279;
 const OVERVIEW_MAX_LENGTH = 192;
 const DEFAULT_HOME_HERO_OVERVIEW =
@@ -9,26 +9,26 @@ let isLibraryHero = false;
 let heroResizeRafId = null;
 let currentLibraryHeroMovie = null;
 
-window.addEventListener("resize", handleHeroResize);
+window.addEventListener('resize', handleHeroResize);
 
 export async function initHero() {
-  const hero = document.getElementById("hero");
+  const hero = document.getElementById('hero');
 
   if (!hero) return;
 
-  if (window.location.pathname.toLowerCase().includes("library")) {
+  if (window.location.pathname.toLowerCase().includes('library')) {
     isLibraryHero = true;
     await renderLibraryHero();
     return;
   }
 
   try {
-    const data = await getTrending("day");
+    const data = await getTrending('day');
 
     if (!data || !data.results) {
       currentHeroMovie = null;
       renderFallbackHero();
-      reportError("API data error:", data);
+      reportError('API data error:', data);
       return;
     }
 
@@ -47,9 +47,8 @@ export async function initHero() {
     isLibraryHero = false;
 
     renderHero(movie);
-
   } catch (error) {
-    reportError("Hero error:", error);
+    reportError('Hero error:', error);
     currentHeroMovie = null;
     renderFallbackHero();
   }
@@ -74,7 +73,7 @@ function getBackdropImageUrl(backdropPath) {
 }
 
 function formatOverviewText(text) {
-  const overview = text?.trim() || "No description";
+  const overview = text?.trim() || 'No description';
 
   if (!shouldTruncateOverview() || overview.length <= OVERVIEW_MAX_LENGTH) {
     return overview;
@@ -91,7 +90,7 @@ function handleHeroResize() {
   heroResizeRafId = requestAnimationFrame(() => {
     heroResizeRafId = null;
 
-    const hero = document.getElementById("hero");
+    const hero = document.getElementById('hero');
 
     if (!hero) return;
 
@@ -115,7 +114,7 @@ function handleHeroResize() {
 }
 
 function renderHero(movie) {
-  const hero = document.getElementById("hero");
+  const hero = document.getElementById('hero');
   const image = getBackdropImageUrl(movie.backdrop_path);
   const starHtml = generateStarIconsMarkup(movie.vote_average, 'hero__star');
 
@@ -151,7 +150,7 @@ function renderHero(movie) {
 }
 
 function renderFallbackHero() {
-  const hero = document.getElementById("hero");
+  const hero = document.getElementById('hero');
 
   if (!hero) return;
 
@@ -202,14 +201,14 @@ function renderFallbackHero() {
 }
 
 async function renderLibraryHero() {
-  const hero = document.getElementById("hero");
+  const hero = document.getElementById('hero');
 
   if (!hero) return;
 
   isLibraryHero = true;
 
   try {
-    const data = await getTrending("day");
+    const data = await getTrending('day');
     const movies = data?.results?.filter(movie => movie.backdrop_path) || [];
 
     if (movies.length > 0) {
@@ -219,17 +218,17 @@ async function renderLibraryHero() {
       return;
     }
   } catch (error) {
-    reportError("Library hero error:", error);
+    reportError('Library hero error:', error);
   }
 
   currentLibraryHeroMovie = null;
 
-  const mobile = getAssetUrl("library-mobile.jpg");
-  const mobile2x = getAssetUrl("library-mobile@2x.jpg");
-  const tablet = getAssetUrl("library-tablet.jpg");
-  const tablet2x = getAssetUrl("library-tablet@2x.jpg");
-  const desktop = getAssetUrl("library-desktop.jpg");
-  const desktop2x = getAssetUrl("library-desktop@2x.jpg");
+  const mobile = getAssetUrl('library-mobile.jpg');
+  const mobile2x = getAssetUrl('library-mobile@2x.jpg');
+  const tablet = getAssetUrl('library-tablet.jpg');
+  const tablet2x = getAssetUrl('library-tablet@2x.jpg');
+  const desktop = getAssetUrl('library-desktop.jpg');
+  const desktop2x = getAssetUrl('library-desktop@2x.jpg');
 
   hero.innerHTML = `
     <picture class="hero__bg-picture">
@@ -253,7 +252,7 @@ async function renderLibraryHero() {
           <h1 class="hero__title">Create Your Dream Cinema</h1>
           <div class="hero__rating"></div>
           <p class="hero__overview">
-            ${formatOverviewText("Is a guide to designing a personalized movie theater experience with the right equipment, customized decor, and favorite films. This guide helps you bring the cinema experience into your own home with cozy seating, dim lighting, and movie theater snacks.")}
+            ${formatOverviewText('Is a guide to designing a personalized movie theater experience with the right equipment, customized decor, and favorite films. This guide helps you bring the cinema experience into your own home with cozy seating, dim lighting, and movie theater snacks.')}
           </p>
         </div>
       </div>

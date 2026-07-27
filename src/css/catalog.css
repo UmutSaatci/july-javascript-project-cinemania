@@ -1,96 +1,567 @@
-.catalog-section { padding-bottom: 60px; }
-
-/* SEARCH & FILTERS */
-.search-filter-wrapper { margin-bottom: 40px; }
-.search-filter-form { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-.search-input-wrapper { position: relative; width: 100%; }
-.search-input { width: 100%; height: 48px; background: transparent; border: 1px solid var(--border-light-strong); border-radius: 8px; padding: 0 40px 0 20px; color: var(--text-primary); font-size: 14px; outline: none; box-sizing: border-box; }
-.searcher__clear { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-light-muted); cursor: pointer; font-size: 16px; }
-.search-btn { width: 48px; height: 48px; flex-shrink: 0; background: var(--gradient-primary); border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-.search-btn svg { stroke: var(--black); }
-
-.custom-select { position: relative; flex: 1; }
-.custom-select__btn { width: 100%; height: 48px; background: transparent; border: 1px solid var(--border-light-strong); border-radius: 8px; padding: 0 20px; color: var(--text-primary); font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-sizing: border-box; }
-.custom-select__arrow { transition: transform 0.2s ease; stroke: var(--grey-white-theme); }
-
-/* DROPDOWN LİSTE */
-.custom-select__list { 
-    position: absolute; 
-    top: 54px; 
-    left: 0; 
-    width: 100%; 
-    background: var(--surface-dark); 
-    border: 1px solid var(--border-light-strong); 
-    border-radius: 8px; 
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
-    z-index: 50; 
-    max-height: 292px; 
-    overflow-y: auto; 
-}
-.custom-select__list.hide { display: none !important; }
-
-.custom-select__list li { padding: 12px 20px; color: var(--white); font-size: 14px; border-bottom: 1px solid var(--border-light-soft); cursor: pointer; }
-.custom-select__list li:hover, .custom-select__list li.selected { color: var(--orange); background: var(--overlay-white-08); }
-.year-menu li { text-align: center; border-bottom: none; }
-.year-menu li.selected { font-size: 24px; font-weight: 500; line-height: 28px;}
-
-/* MOVIE GRID */
-.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); justify-content: center; gap: 20px; list-style: none; padding: 0; margin: 0; }
-.movie-card { position: relative; width: 100%; border-radius: 5px; overflow: hidden; background-color: var(--secondary-black); cursor: pointer; transition: transform 0.3s; }
-.movie-card:hover { transform: scale(1.03); }
-.movie-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 63.48%, rgba(0, 0, 0, 0.9) 92.16%); pointer-events: none; z-index: 1; }
-.movie-card__poster { width: 100%; aspect-ratio: 280 / 406; object-fit: cover; display: block; }
-.movie-card__info { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; padding: 0; }
-.movie-card__title { font-size: 16px; font-weight: 500; color: #FFFFFF; margin: 0 0 6px 0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.movie-card__meta { display: flex; justify-content: space-between; align-items: center; }
-.movie-card__text { font-size: 12px; font-weight: 500; color: var(--text-dark-muted); }
-.movie-card__stars { display: flex; gap: 4px; align-items: center; }
-.movie-card__star { width: 14px; height: 14px; display: block; object-fit: contain; }
-
-/* OOPS & PAGINATION */
-.oops-message { text-align: center; color: var(--text-primary); padding: 80px 0; }
-.oops-title { font-size: 32px; margin: 0 0 10px 0; }
-.oops-text { font-size: 20px; margin: 0; line-height: 28px;}
-
-.pagination { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 40px; }
-.pagination__btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-light-strong); background: transparent; color: var(--grey); font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-.pagination__btn.active { background: var(--gradient-primary); color: var(--black); border: none; font-weight: 500; }
-.pagination__btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Light Theme Overrides */
-body.light-theme .search-input { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .custom-select__btn { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .custom-select__list { background: var(--white); border-color: var(--border-light-strong); }
-body.light-theme .custom-select__list li { color: var(--background); border-bottom-color: var(--border-light-soft); }
-body.light-theme .custom-select__list li:hover, body.light-theme .custom-select__list li.selected { background: var(--surface-white-soft); }
-body.light-theme .movie-card { background-color: var(--surface-white-soft); }
-body.light-theme .pagination__btn { border-color: var(--border-light-strong); color: var(--background); }
-body.light-theme .pagination__btn.active { color: var(--black); }
-
-/* TABLET & DESKTOP (BREAKPOINTS) */
-@media screen and (min-width: 768px) {
-  .container { padding: 0 32px; }
-
-  .search-filter-form { flex-direction: row; align-items: center; justify-content: flex-start;}
-  .search-input-wrapper { width: 260px; }
-  .genre-select { width: 150px; flex: none; }
-  .year-select { width: 95px; flex: none; }
-  .search-btn { margin-left: 10px; }
-
-  .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .movie-card__poster { aspect-ratio: 224 / 325; }
+/* ==========================================================================
+   VARSAYILAN MOBİL DÜZENİ (320px - 1199px) [MOBILE FIRST]
+   ========================================================================== */
+.catalog__wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 20px;
 }
 
-@media screen and (min-width: 1280px) {
-  .search-input-wrapper { width: 315px; }
+.search-form {
+  display: flex;
+  flex-wrap: wrap; /* Mobilde sığmayan kutuları alta kırar */
+  padding-top: 40px;
+  gap: 12px;
+  width: 100%;
+  max-width: 395px;
+  margin: 0 auto !important;
+}
 
-  .movie-grid { grid-template-columns: repeat(3, 395px); gap: 32px 16px; }
-  .movie-card { width: 395px; height: 574px; }
-  .movie-card__poster { aspect-ratio: 395 / 574; }
-  .movie-card__info { left: 20px; bottom: 24px; right: 20px; }
-  .movie-card__title { font-size: 20px; margin-bottom: 8px;}
-  .movie-card__text { font-size: 14px; }
-  .movie-card__star { width: 18px; height: 18px; }
+.search-form__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid rgba(89, 89, 89, 1);
+  border-radius: 8px;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.search-form__box--input {
+  width: calc(100% - 60px); /* Büyüteç butonunun yanına sığması için */
+  padding: 0 16px;
+  order: 3; /* Mobilde her zaman en altta durur */
+}
+
+.search-form__box--clone {
+  display: none;
+  width: calc(100% - 107px); /* Yanına yıl çarkı sığması için */
+  padding: 0 40px 0 16px;
+  background-color: #f9f9f9;
+  order: 1; /* Mobilde üst satıra geçer */
+}
+
+.search-form__box--clone.is-active {
+  display: flex !important;
+}
+
+.search-form__input,
+.search-form__input-clone {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+  color: #111111;
+}
+
+.search-form__box--year {
+  display: none;
+  width: 95px !important;
+  height: 48px !important;
+  padding: 0;
+  flex-shrink: 0;
+  order: 2; /* Mobilde üst satırda inputun yanına geçer */
+}
+
+.search-form__box--year.is-visible {
+  display: flex !important;
+}
+
+.search-form__clear-btn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #8c8c8c;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+  z-index: 5;
+}
+
+.search-form__submit-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 194, 38, 1) 0%,
+    rgba(248, 65, 25, 1) 100%
+  );
+  color: #ffffff;
+  order: 4;
+  cursor: pointer;
+}
+
+/* ÇARK İÇ TASARIMLARI */
+.custom-select {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.custom-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #595959;
+  cursor: pointer;
+}
+.custom-select__trigger.is-open .custom-select__arrow {
+  transform: rotate(180deg);
+}
+.custom-select__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #f5f5f5;
+  border: 1px solid rgba(89, 89, 89, 1);
+  border-radius: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  height: 160px;
+  overflow-y: scroll;
+  z-index: 10;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  /* 🔥 CRITICAL FIX: Üst kapsayıcı flex olsa bile listenin başlangıçta kapalı kalmasını sağlar */
+  display: none !important;
+}
+
+/* 2. Sadece ve sadece .hide sınıfı ORTADAN KALKTIĞINDA listeyi flex yaparak ekrana bas diyoruz */
+.custom-select__options:not(.hide) {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* 3. Yardımcı gizleme sınıfının gücünü en üst seviyeye çıkartıyoruz */
+.hide {
+  display: none !important;
+}
+
+/* 4. Mobilde yıl kutusu görünür olduğunda sadece BUTON kapsayıcısını aç, alt listeyi değil */
+.search-form__box--year.is-visible {
+  display: flex !important;
+}
+.custom-select__options::-webkit-scrollbar {
+  display: none;
+}
+/* ==========================================================================
+   YIL ÇARK SATIRLARI - SOFT VE ODDAKLANMA EFEKTİ YENİDEN KAZANDIRILDI
+   ========================================================================== */
+.custom-select__option {
+  height: 40px; /* Sabit satır yüksekliği */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* Varsayılan (Odak Dışı) Soft Görünüm */
+  font-size: 14px;
+  color: #a0a0a0; /* Kenarlarda kalan yıllar daha silik ve soft durur */
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 2em;
+
+  text-align: center;
+  scroll-snap-align: center;
+  box-sizing: border-box;
+
+  /* Büyüme ve renk değişiminin milimetrik yumuşaklıkta (soft) akması için */
+  transition:
+    transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    color 0.2s ease,
+    font-weight 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* 🔥 FOCUS / ACTIVE MANTIĞI: Sadece tam ortada kilitlenen yıl öne çıkar */
+.custom-select__option.is-active {
+  transform: scale(1.25); /* Ortadaki eleman yumuşakça büyür */
+  color: rgba(248, 119, 25, 1) !important; /* Sizin canlı turuncu renginiz */
+  font-weight: 700; /* Yazı kalınlaşır */
+  background-color: rgba(
+    248,
+    119,
+    25,
+    0.05
+  ); /* Arkasına çok hafif, şık bir turuncu parlama ekledik */
+  border-radius: 8px; /* Parlamanın kenarları hafif oval olur */
+}
+
+/* HOVER EFEKTİ: Fareyle gezerken anlık soft turuncu tepki */
+.custom-select__option:hover:not(.is-active) {
+  color: rgba(248, 119, 25, 0.7);
+  font-weight: 500;
+}
+
+/* KAPSAYICI VE FILM IZGARASI (MOBİL) */
+.catalog .container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  box-sizing: border-box;
+}
+
+.catalog-movies-list {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobilde tek kolon */
+  row-gap: 32px;
+  padding: 40px 0;
+  justify-items: center;
+  width: 100%;
+}
+
+.movie-card {
+  position: relative;
+  width: 100%;
+  max-width: 224px; /* Yeni kibar genişlik sınırı */
+  height: 325px; /* İstediğiniz net yükseklik */
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-6px);
+}
+.movie-card__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.movie-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* 🔥 KURAL 1: İçindeki tüm metin bloklarının en soldan başlamasını garanti eder */
+  align-items: flex-start;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.movie-card__title {
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  font-family: sans-serif;
+  letter-spacing: 0.5px;
+  /* 🔥 KURAL 2: Başlığın kendi hizalamasını da sola çekiyoruz */
+  text-align: left;
+  width: 100%;
+}
+
+/* Alt Bilgi Satırı (Tür, Yıl solda alt alta; yıldızlar sağda kalacak şekilde optimize edildi) */
+.movie-card__meta {
+  display: flex;
+  justify-content: space-between; /* Yazıları sola, yıldızları sağa yaslar */
+  align-items: flex-end; /* Yıldızlar ile yazının alt tabanını eşitler */
+  width: 100%;
+}
+
+.movie-card__details {
+  color: #b3b3b3;
+  font-size: 12px;
+  font-family: sans-serif;
+  /* 🔥 KURAL 3: Detay yazılarının (Tür ve Yıl) sola yaslanması ve alt alta durması için */
+  text-align: left;
+  display: flex;
+  flex-direction: column; /* Eğer yazı iki satıra bölünürse alt alta kalması için */
+  gap: 2px;
+}
+
+.movie-card__stars {
+  color: #ff6b00;
+  font-size: 13px;
+  letter-spacing: 1px;
+  flex-shrink: 0; /* Yıldızların sıkışıp daralmasını önler */
+}
+
+/* HATA MESAJLARI VE MOBİL SAYFALAMA */
+.catalog-error-message,
+.catalog-loading {
+  grid-column: 1 / -1;
+  margin-top: 120px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: sans-serif;
+}
+.catalog-error-message h2 {
+  font-size: 32px;
+  color: rgba(248, 119, 25, 1);
+  margin-bottom: 12px;
+}
+.catalog-error-message p {
+  font-size: 18px;
+  color: #8c8c8c;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 0 50px 0;
+  width: 100%;
+}
+.pagination-arrow {
+  background: none;
+  border: none;
+  color: #f8f5f5;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pagination-numbers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(252, 248, 248, 0.4);
+  border-radius: 50%;
+  background-color: transparent;
+  color: #fdf9f9;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.pagination-dots {
+  color: #fcfbfb;
+  font-size: 12px;
+  padding: 0 2px;
+}
+.pagination-btn.is-active {
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 194, 38, 1) 0%,
+    rgba(248, 65, 25, 1) 100%
+  );
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .catalog .container {
+    max-width: 740px !important; /* Tablet ekran sınırına göre genişlik */
+    margin: 0 auto !important;
+  }
+  .search-form {
+    padding-top: 80px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-width: 700px;
+    width: max-content; /* Kutunun gereksiz uzayıp sola kaymasını önler */
+    gap: 16px;
+    margin: 0 auto !important; /* Sol ve sağ boşluğu eşit dağıtarak ortalar */
+  }
+
+  /* Masaüstünde klon kutu imha edilir */
+  .search-form__box--clone,
+  #mobileCloneBox {
+    display: none !important;
+  }
+
+  /* Giriş kutusu sola yanaşır */
+  .search-form__box--input {
+    width: 315px !important;
+    flex: none;
+    order: 1 !important;
+  }
+
+  /* Çark tam sağa (input yanına) yerleşir */
+  .search-form__box--year {
+    display: flex !important;
+    position: relative;
+    order: 2 !important;
+  }
+  .search-form__submit-btn {
+    order: 3 !important;
+  }
+
+  /* 🔥 KURAL: Tablette kartlar yan yana dizilir, boyutları 224x325px kalır */
+  .catalog-movies-list {
+    display: grid !important;
+    grid-template-columns: repeat(
+      3,
+      224px
+    ) !important; /* Yan yana 3 adet kibar kart */
+    grid-auto-rows: 325px !important; /* Net 325px yükseklik */
+    column-gap: 16px;
+    row-gap: 28px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Kartın kendi sınırlarını tablet için 224x325px boyutuna kilitliyoruz */
+  .movie-card {
+    width: 224px !important;
+    height: 325px !important;
+    min-width: 224px !important;
+    max-width: 224px !important;
+    min-height: 325px !important;
+    max-height: 325px !important;
+    border-radius: 12px;
+  }
+
+  /* Tablette yazı boyutlarının küçük kalmasını sağlıyoruz */
+  .movie-card__overlay {
+    padding: 16px;
+  }
+  .movie-card__title {
+    font-size: 15px;
+    margin: 0 0 6px 0;
+  }
+  .movie-card__details {
+    font-size: 12px;
+  }
+  .movie-card__stars {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  /* Masaüstünde sayfalama normal boyutuna (40px) döner */
+  .pagination-btn,
+  .pagination-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================================================
+   MASAÜSTÜ GEÇİŞ DÜZENİ (1200px ve Üzeri) [DESKTOP]
+   ========================================================================== */
+@media (min-width: 1200px) {
+  /* 1. Üç büyük kartın yan yana sığabilmesi için container alanını genişletiyoruz */
+  .catalog .container {
+    max-width: 1300px !important;
+    width: 100% !important;
+  }
+
+  .search-form {
+    padding-top: 80px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-width: 700px;
+    width: max-content; /* Kutunun gereksiz uzayıp sola kaymasını önler */
+    gap: 16px;
+    margin: 0 auto !important; /* Sol ve sağ boşluğu eşit dağıtarak ortalar */
+  }
+
+  .search-form__box--clone,
+  #mobileCloneBox {
+    display: none !important;
+  }
+
+  .search-form__box--input {
+    width: 315px !important;
+    flex: none;
+    order: 1 !important;
+  }
+
+  .search-form__box--year {
+    display: flex !important;
+    position: relative;
+    order: 2 !important;
+  }
+
+  .search-form__submit-btn {
+    order: 3 !important;
+  }
+
+  /* 🔥 KATI KURAL: İstediğiniz 395x574px ölçüleri buraya kusursuz entegre edildi */
+  .catalog-movies-list {
+    display: grid !important;
+    grid-template-columns: repeat(3, 395px) !important; /* Net 395px genişlik */
+    grid-auto-rows: 574px !important; /* Net 574px yükseklik */
+    column-gap: 16px;
+    row-gap: 28px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Kartın kendi sınırlarını da bu büyük boyutlara kilitliyoruz */
+  .movie-card {
+    width: 395px !important;
+    height: 574px !important;
+    min-width: 395px !important;
+    max-width: 395px !important;
+    min-height: 574px !important;
+    max-height: 574px !important;
+    border-radius: 16px; /* Kart büyüdüğü için köşeleri yeniden 16px yapıyoruz */
+  }
+
+  /* Büyük kartta başlık ve yıldız boyutlarını yeniden şık ve dengeli hale getiriyoruz */
+  .movie-card__overlay {
+    padding: 24px; /* İç boşluğu kart boyutuna göre artırdık */
+  }
+
+  .movie-card__title {
+    font-size: 20px; /* Başlık yazı boyutu büyük karta göre dengelendi */
+    margin: 0 0 8px 0;
+  }
+
+  .movie-card__details {
+    font-size: 15px; /* Detay yazıları dengelendi */
+  }
+
+  .movie-card__stars {
+    font-size: 16px; /* Yıldızlar dengelendi */
+    letter-spacing: 2px;
+  }
+  /* Masaüstünde sayfalama normal boyutuna (40px) döner */
+  .pagination-btn,
+  .pagination-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
 }

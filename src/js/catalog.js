@@ -1,326 +1,400 @@
-import { initHeader } from './header.js';
+import { searchMovies, getTrending, convertGenreIdsToNames } from './api.js';
 import { initHero } from './hero.js';
-i
-import {
-  getTrendingPaged,
-  searchMovies,
-  convertGenreIdsToNames,
-} from './api.js';
-let movieGrid;
-let oopsMessage;
-let pagination;
-let searchForm;
-let searchInput;
-let clearBtn;
-let yearSelect;
 
-let yearSelectCustom;
-let yearSelectButton;
-let yearSelectLabel;
-let yearSelectList;
+document.addEventListener('DOMContentLoaded', () => {
+  // Hero alanını katalog modunda tetikliyoruz
+  initHero();
 
-let currentPage = 1;
-let totalPages = 1;
-let searchQuery = '';
-let searchYear = '';
-let isSearching = false;
+  // ELEMENTLERİN SEÇİLMESİ
+  const searchInput = document.getElementById('searchInput');
+  const yearSelectWrapper = document.getElementById('yearSelectWrapper');
+  const searchForm = document.getElementById('searchForm');
+  const yearMenu = document.getElementById('yearMenu');
+  const customSelectTrigger = document.querySelector('.custom-select__trigger');
+  const customSelectLabel = document.querySelector('.custom-select__label');
+  const moviesListBlock = document.querySelector('.catalog-movies-list');
 
-function showLoader() {
-  if (movieGrid) {
-    movieGrid.innerHTML =
-      '<li class="global-loader__spinner" style="margin: 40px auto; display: block;"></li>';
+  // İKİLİ ÇARPI SİSTEMİ VE KLON KUTU
+  const clearBtnDesktop = document.getElementById('clearBtnDesktop');
+  const clearBtnMobile = document.getElementById('clearBtnMobile');
+  const mobileCloneBox = document.getElementById('mobileCloneBox');
+
+  // SAYFALAMA ELEMENTLERİ
+  const paginationWrapper = document.getElementById('paginationWrapper');
+  const paginationNumbers = document.getElementById('paginationNumbers');
+  const prevPageBtn = document.getElementById('prevPageBtn');
+  const nextPageBtn = document.getElementById('nextPageBtn');
+
+  // SUNUCU TABANLI SAYFALAMA HAFIZASI (STATE)
+  let currentPage = 1;
+  let totalPages = 1;
+  let currentQuery = '';
+  let currentSelectedYear = '';
+  let isSearchingMode = false;
+
+  let activeIndex = 0;
+  let options = [];
+
+  // SAYFA İLK AÇILDIĞINDA TREND FİLMLERİ GETİRME
+  async function sayfaBaslangiciniYukle() {
+    try {
+      isSearchingMode = false;
+      if (paginationWrapper) paginationWrapper.style.display = 'none';
+      if (moviesListBlock) {
+        moviesListBlock.innerHTML =
+          '<div class="catalog-loading">Loading trending movies...</div>';
+      }
+
+      const apiResponse = await getTrending('day');
+      const trendFilmler = apiResponse ? apiResponse.results : null;
+
+      if (
+        !trendFilmler ||
+        !Array.isArray(trendFilmler) ||
+        trendFilmler.length === 0
+      ) {
+        moviesListBlock.innerHTML =
+          '<div class="catalog-error-message"><p>No trending movies found.</p></div>';
+        return;
+      }
+
+      moviesListBlock.innerHTML = '';
+      await filmKartlariniGoster(trendFilmler, false);
+    } catch (error) {
+      if (moviesListBlock) {
+        moviesListBlock.innerHTML = `<div class="catalog-error-message"><p>${error.message || 'An error occurred.'}</p></div>`;
+      }
+    }
   }
-  if (oopsMessage) oopsMessage.classList.add('hidden');
-}
 
-function showOops(show) {
-  if (show) {
-    if (oopsMessage) oopsMessage.classList.remove('hidden');
-    if (movieGrid) movieGrid.innerHTML = '';
-  } else {
-    if (oopsMessage) oopsMessage.classList.add('hidden');
-  }
-}
+  sayfaBaslangiciniYukle();
 
-function buildPagination(current, total) {
-  if (!pagination) return;
-  pagination.innerHTML = '';
+  // FORM SUBMIT (ARAMA BAŞLANGICI)
+  searchForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    currentQuery = searchInput.value.trim();
+    currentSelectedYear =
+      customSelectLabel.textContent === 'Year'
+        ? ''
+        : customSelectLabel.textContent;
 
-  if (total <= 1) return;
-
-  const maxPage = Math.min(total, 20);
-
-  const prev = document.createElement('button');
-  prev.className = 'pagination__btn';
-  prev.textContent = '←';
-  prev.disabled = current === 1;
-  prev.addEventListener('click', () => changePage(current - 1));
-  pagination.appendChild(prev);
-
-  const pages = getPageRange(current, maxPage);
-  pages.forEach(p => {
-    if (p === '...') {
-      const dots = document.createElement('span');
-      dots.className = 'pagination__dots';
-      dots.textContent = '...';
-      pagination.appendChild(dots);
+    if (!currentQuery) {
+      moviesListBlock.innerHTML = `<div class="catalog-error-message"><p>Please enter a movie title to search.</p></div>`;
+      if (paginationWrapper) paginationWrapper.style.display = 'none';
       return;
     }
 
-    const btn = document.createElement('button');
-    btn.className = 'pagination__btn';
-    btn.textContent = p;
-    if (p === current) btn.classList.add('active');
-    btn.addEventListener('click', () => changePage(p));
-    pagination.appendChild(btn);
+    isSearchingMode = true;
+    currentPage = 1;
+    await porsiyonUcur();
   });
 
-  const next = document.createElement('button');
-  next.className = 'pagination__btn';
-  next.textContent = '→';
-  next.disabled = current === maxPage;
-  next.addEventListener('click', () => changePage(current + 1));
-  pagination.appendChild(next);
-}
+  // SUNUCUDAN PORSIYON ÇEKEN ANA FONKSİYON
+  async function porsiyonUcur() {
+    try {
+      moviesListBlock.innerHTML =
+        '<div class="catalog-loading">Searching movies...</div>';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-function getPageRange(current, total) {
-  if (total <= 7) {
-    const all = [];
-    for (let i = 1; i <= total; i++) all.push(i);
-    return all;
+      const apiResponse = await searchMovies(
+        currentQuery,
+        currentPage,
+        currentSelectedYear
+      );
+      const aramaSonuclari = apiResponse ? apiResponse.results : null;
+      totalPages = apiResponse ? Math.min(apiResponse.total_pages, 500) : 1;
+
+      if (!aramaSonuclari || aramaSonuclari.length === 0) {
+        moviesListBlock.innerHTML = `
+          <div class="catalog-error-message">
+            <h2>OOPS...</h2>
+            <p>We are very sorry!</p>
+            <p>We don’t have any results matching your search.</p>
+          </div>
+        `;
+        if (paginationWrapper) paginationWrapper.style.display = 'none';
+        return;
+      }
+
+      moviesListBlock.innerHTML = '';
+      await filmKartlariniGoster(aramaSonuclari, false);
+      renderPaginationDinamikleri();
+    } catch (error) {
+      moviesListBlock.innerHTML = `<div class="catalog-error-message"><p>${error.message || 'An error occurred.'}</p></div>`;
+    }
   }
-  if (current <= 4) {
-    return [1, 2, 3, 4, 5, '...', total];
+
+  // Görseldeki numaraları (01 02 ... 24) oluşturan fonksiyon
+  function renderPaginationDinamikleri() {
+    if (!isSearchingMode || totalPages <= 1) {
+      if (paginationWrapper) paginationWrapper.style.display = 'none';
+      return;
+    }
+
+    if (paginationWrapper) paginationWrapper.style.display = 'flex';
+    paginationNumbers.innerHTML = '';
+
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+
+    const range = 1;
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - range && i <= currentPage + range)
+      ) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `pagination-btn ${i === currentPage ? 'is-active' : ''}`;
+        btn.textContent = i < 10 ? `0${i}` : i;
+
+        btn.addEventListener('click', () => {
+          currentPage = i;
+          porsiyonUcur();
+        });
+        paginationNumbers.appendChild(btn);
+      } else if (i === 2 || i === totalPages - 1) {
+        if (
+          !paginationNumbers.lastChild ||
+          paginationNumbers.lastChild.textContent !== '...'
+        ) {
+          const dots = document.createElement('span');
+          dots.className = 'pagination-dots';
+          dots.textContent = '...';
+          paginationNumbers.appendChild(dots);
+        }
+      }
+    }
   }
-  if (current >= total - 3) {
-    return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
-  }
-  return [1, '...', current - 1, current, current + 1, '...', total];
-}
 
-function toggleYearSelect(open) {
-  if (!yearSelectList || !yearSelectButton) return;
-  yearSelectList.classList.toggle('hide', !open);
-  yearSelectButton.setAttribute('aria-expanded', open ? 'true' : 'false');
-}
-
-function syncYearSelect(value, label) {
-  if (yearSelect) yearSelect.value = value;
-  if (yearSelectLabel) yearSelectLabel.textContent = label;
-  if (yearSelectList) {
-    yearSelectList.querySelectorAll('li').forEach(item => {
-      item.classList.toggle('selected', item.dataset.value === String(value));
-    });
-  }
-}
-
-function initYearCustomSelect() {
-  yearSelectCustom = document.getElementById('yearSelectCustom');
-  if (!yearSelectCustom || !yearSelect) return;
-
-  yearSelectButton = yearSelectCustom.querySelector('.custom-select__btn');
-  yearSelectLabel = yearSelectCustom.querySelector('.custom-select__label');
-  yearSelectList = yearSelectCustom.querySelector('.custom-select__list');
-
-  if (!yearSelectButton || !yearSelectLabel || !yearSelectList) return;
-
-  yearSelectList.innerHTML = '';
-
-  const defaultOption = document.createElement('li');
-  defaultOption.dataset.value = '';
-  defaultOption.textContent = 'Year';
-  yearSelectList.appendChild(defaultOption);
-
-  Array.from(yearSelect.options).forEach(option => {
-    if (option.value === '') return;
-    const item = document.createElement('li');
-    item.dataset.value = option.value;
-    item.textContent = option.textContent;
-    yearSelectList.appendChild(item);
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      porsiyonUcur();
+    }
+  });
+  nextPageBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      porsiyonUcur();
+    }
   });
 
-  syncYearSelect(yearSelect.value, 'Year');
-  toggleYearSelect(false);
+  // FILM KARTLARINI BASMA FONKSİYONU (DİNAMİK TÜRLER ENTEGRELİ)
+  async function filmKartlariniGoster(filmler, appendMode = false) {
+    if (!moviesListBlock) return;
+    if (!appendMode) moviesListBlock.innerHTML = '';
 
-  yearSelectButton.addEventListener('click', e => {
-    e.stopPropagation();
-    const isOpen = !yearSelectList.classList.contains('hide');
-    toggleYearSelect(!isOpen);
-  });
+    for (const film of filmler) {
+      const kart = document.createElement('div');
+      kart.className = 'movie-card';
 
-  yearSelectList.addEventListener('click', e => {
-    const item = e.target.closest('li');
-    if (!item) return;
-    syncYearSelect(item.dataset.value, item.textContent);
-    toggleYearSelect(false);
-  });
+      const posterUrl = film.poster_path
+        ? `https://image.tmdb.org/t/p/w500${film.poster_path}`
+        : 'https://placehold.co/400x400?text=No+Image';
 
-  document.addEventListener('click', () => {
-    toggleYearSelect(false);
-  });
-}
+      const vizyonYili = film.release_date
+        ? film.release_date.split('-')[0]
+        : 'Unknown';
 
-function changePage(page) {
-  if (page < 1 || page > Math.min(totalPages, 20)) return;
-  if (isSearching) {
-    loadSearch(searchQuery, page, searchYear);
-  } else {
-    loadTrending(page);
-  }
-}
+      let dinamikTurler = 'Unknown';
+      if (film.genre_ids && film.genre_ids.length > 0) {
+        const turDizisi = await convertGenreIdsToNames(film.genre_ids);
+        dinamikTurler = turDizisi.slice(0, 2).join(', ');
+      }
 
-function scrollToCatalog() {
-  const section = document.querySelector('.catalog-section');
-  if (section) {
-    const header = document.querySelector('.header');
-    const headerHeight = header ? header.offsetHeight : 0;
-    const targetTop = Math.max(section.offsetTop - headerHeight - 40, 0);
-    window.scrollTo({ top: targetTop, behavior: 'smooth' });
-  }
-}
+      const yildizSayisi = Math.round(film.vote_average / 2);
+      const yildizlar = '★'.repeat(yildizSayisi) + '☆'.repeat(5 - yildizSayisi);
 
-async function renderMovies(movies) {
-  if (!movieGrid) return;
-  const markup = await Promise.all(
-    movies.map(async movie => {
-      const genres = await convertGenreIdsToNames(movie.genre_ids || []);
-      const year = movie.release_date ? movie.release_date.slice(0, 4) : '—';
-      const poster = movie.poster_path
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-        : './img/oops-logo.png';
-      const rating = movie.vote_average || 0;
-      const starsHtml = generateStarIconsMarkup(rating, 'movie-card__star');
-
-      return `
-      <li class="movie-card" data-id="${movie.id}">
-        <img src="${poster}" alt="${movie.title}" class="movie-card__poster" loading="lazy" />
-        <div class="movie-card__info">
-          <h3 class="movie-card__title">${movie.title}</h3>
+      kart.innerHTML = `
+        <img class="movie-card__poster" src="${posterUrl}" alt="${film.title}" loading="lazy">
+        <div class="movie-card__overlay">
+          <h2 class="movie-card__title">${film.title}</h2>
           <div class="movie-card__meta">
-            <span class="movie-card__text">${genres.slice(0, 2).join(', ')} | ${year}</span>
-            <div class="movie-card__stars">${starsHtml}</div>
+            <div class="movie-card__details">${dinamikTurler} | ${vizyonYili}</div>
+            <div class="movie-card__stars">${yildizlar}</div>
           </div>
         </div>
-      </li>
-    `;
-    })
-  );
+      `;
 
-  movieGrid.innerHTML = markup.join('');
-}
-
-async function loadTrending(page) {
-  showLoader();
-  try {
-    const data = await getTrendingPaged(page);
-    currentPage = page;
-    totalPages = data.total_pages;
-
-    if (!data.results || data.results.length === 0) {
-      showOops(true);
-      if (pagination) pagination.innerHTML = '';
-      return;
+      kart.addEventListener('click', () => {
+        console.log(`Selected Movie ID: ${film.id}`);
+      });
+      moviesListBlock.appendChild(kart);
     }
-
-    showOops(false);
-    await renderMovies(data.results);
-    buildPagination(currentPage, totalPages);
-    scrollToCatalog();
-  } catch (err) {
-    console.error(err);
-    showOops(true);
   }
-}
 
-async function loadSearch(query, page, year = '') {
-  showLoader();
-  try {
-    const data = await searchMovies(query, page, year);
-    currentPage = page;
-    totalPages = data.total_pages;
+  // YIL ÇARK SİSTEMİNİN ÇALIŞMA DÖNGÜLERİ
+  function yillariDoldur() {
+    const mevcutYil = new Date().getFullYear();
+    const baslangicYili = 1900;
 
-    if (!data.results || data.results.length === 0) {
-      showOops(true);
-      if (pagination) pagination.innerHTML = '';
-      return;
+    let htmlIcerik =
+      '<li class="custom-select__option custom-select__option--default" data-value="">Year</li>';
+    for (let yil = mevcutYil; yil >= baslangicYili; yil--) {
+      htmlIcerik += `<li class="custom-select__option" data-value="${yil}">${yil}</li>`;
     }
-
-    showOops(false);
-    await renderMovies(data.results);
-    buildPagination(currentPage, totalPages);
-    scrollToCatalog();
-  } catch (err) {
-    console.error(err);
-    showOops(true);
-  }
-}
-
-async function bootstrapCatalogPage() {
-  initGlobalUi();
-  initHeader();
-
-  movieGrid = document.getElementById('movieGrid');
-  oopsMessage = document.getElementById('oopsMessage');
-  pagination = document.getElementById('pagination');
-  searchForm = document.getElementById('searchForm');
-  searchInput = document.getElementById('searchInput');
-  clearBtn = document.getElementById('clearBtn');
-  yearSelect = document.getElementById('yearSelect');
-
-  const currentYear = new Date().getFullYear();
-  for (let y = currentYear; y >= 1900; y--) {
-    const option = document.createElement('option');
-    option.value = y;
-    option.textContent = y;
-    yearSelect.appendChild(option);
+    htmlIcerik += '<li class="custom-select__spacer"></li>';
+    yearMenu.innerHTML = htmlIcerik;
+    options = Array.from(yearMenu.querySelectorAll('.custom-select__option'));
   }
 
-  initYearCustomSelect();
+  yillariDoldur();
 
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      if (clearBtn) clearBtn.hidden = searchInput.value.trim() === '';
+  function merkezElemaniniBul() {
+    if (options.length === 0) return;
+    const menuRect = yearMenu.getBoundingClientRect();
+    const menuCenter = menuRect.top + menuRect.height / 2;
+    let enYakinEleman = options[0];
+    let enKucukMesafe = Infinity;
+    let bulunanIndex = 0;
+
+    options.forEach((opt, idx) => {
+      const optRect = opt.getBoundingClientRect();
+      const optCenter = optRect.top + optRect.height / 2;
+      const mesafe = Math.abs(menuCenter - optCenter);
+      if (mesafe < enKucukMesafe) {
+        enKucukMesafe = mesafe;
+        enYakinEleman = opt;
+        bulunanIndex = idx;
+      }
     });
+
+    options.forEach(opt => opt.classList.remove('is-active'));
+    if (enYakinEleman) enYakinEleman.classList.add('is-active');
+    activeIndex = bulunanIndex;
   }
 
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      syncYearSelect('', 'Year');
-      clearBtn.hidden = true;
-      searchInput.focus();
-      isSearching = false;
-      searchQuery = '';
-      searchYear = '';
-      loadTrending(1);
-    });
+  yearMenu.addEventListener('scroll', merkezElemaniniBul);
+
+  customSelectTrigger.addEventListener('click', e => {
+    e.stopPropagation();
+    const isHidden = yearMenu.classList.toggle('hide');
+    if (!isHidden) {
+      customSelectTrigger.classList.add('is-open');
+      setTimeout(() => {
+        merkezdekiElemanaKaydir();
+      }, 50);
+    } else {
+      menuKapat();
+    }
+  });
+
+  function menuKapat() {
+    yearMenu.classList.add('hide');
+    customSelectTrigger.classList.remove('is-open');
+    if (options[activeIndex]) {
+      const secilenYil = options[activeIndex].getAttribute('data-value');
+      customSelectLabel.textContent = secilenYil ? secilenYil : 'Year';
+    }
   }
 
-  if (searchForm) {
-    searchForm.addEventListener('submit', e => {
+  function merkezdekiElemanaKaydir() {
+    if (options[activeIndex]) {
+      options[activeIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      merkezElemaniniBul();
+    }
+  }
+
+  yearMenu.addEventListener('click', e => {
+    if (e.target.classList.contains('custom-select__option')) {
+      const idx = options.indexOf(e.target);
+      if (idx !== -1) {
+        activeIndex = idx;
+        merkezdekiElemanaKaydir();
+        setTimeout(menuKapat, 300);
+      }
+    }
+  });
+
+  customSelectTrigger.addEventListener('keydown', e => {
+    if (yearMenu.classList.contains('hide')) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter') {
+        e.preventDefault();
+        customSelectTrigger.click();
+        return;
+      }
+    }
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
-      const query = searchInput.value.trim();
-      const year = yearSelect.value;
-      if (!query) return;
+      if (activeIndex < options.length - 1) {
+        activeIndex++;
+        merkezdekiElemanaKaydir();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (activeIndex > 0) {
+        activeIndex--;
+        merkezdekiElemanaKaydir();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      menuKapat();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      yearMenu.classList.add('hide');
+      customSelectTrigger.classList.remove('is-open');
+    }
+  });
 
-      isSearching = true;
-      searchQuery = query;
-      searchYear = year;
-      loadSearch(query, 1, year);
-    });
+  document.addEventListener('click', menuKapat);
+  // INPUT VE TEMİZLEME YÖNETİMİ (MOBİL DUYARLI SATIR VE ÇARPI KONTROLLERİ)
+  searchInput.addEventListener('input', e => {
+    const value = e.target.value.trim();
+    const searchClone = document.getElementById('searchClone');
+
+    if (value.length > 0) {
+      if (window.innerWidth < 1200) {
+        // MOBİL DURUMU
+        if (mobileCloneBox) mobileCloneBox.classList.add('is-active');
+        if (yearSelectWrapper) yearSelectWrapper.classList.add('is-visible');
+        if (searchClone) searchClone.value = value;
+        if (clearBtnMobile) clearBtnMobile.style.display = 'block';
+        if (clearBtnDesktop) clearBtnDesktop.style.display = 'none';
+      } else {
+        // MASAÜSTÜ DURUMU
+        if (mobileCloneBox) mobileCloneBox.classList.remove('is-active');
+        if (yearSelectWrapper) yearSelectWrapper.classList.add('is-visible');
+        if (clearBtnDesktop) clearBtnDesktop.style.display = 'block';
+        if (clearBtnMobile) clearBtnMobile.style.display = 'none';
+      }
+
+      // 🔥 KESİN ÇÖZÜM: Giriş yapıldığında liste kutusunun gizli kalmasını (hide) garanti ediyoruz.
+      // Sadece kullanıcı "Year" butonuna kendi eliyle tıkladığında açılacak.
+      if (yearMenu) {
+        yearMenu.classList.add('hide');
+      }
+    } else {
+      sıfırlaVeTemizle();
+    }
+  });
+
+  function sıfırlaVeTemizle() {
+    searchInput.value = '';
+    if (clearBtnDesktop) clearBtnDesktop.style.display = 'none';
+    if (clearBtnMobile) clearBtnMobile.style.display = 'none';
+    if (mobileCloneBox) mobileCloneBox.classList.remove('is-active');
+    if (yearSelectWrapper) yearSelectWrapper.classList.remove('is-visible');
+    if (yearMenu) yearMenu.classList.add('hide'); // Sıfırlanınca listeyi kapat
+    if (customSelectTrigger) customSelectTrigger.classList.remove('is-open');
+    customSelectLabel.textContent = 'Year';
+    activeIndex = 0;
   }
 
-  if (movieGrid) {
-    movieGrid.addEventListener('click', e => {
-      const card = e.target.closest('.movie-card');
-      if (!card) return;
-      showMovieSpotlight(card.dataset.id);
+  if (clearBtnDesktop)
+    clearBtnDesktop.addEventListener('click', () => {
+      sıfırlaVeTemizle();
+      searchInput.focus();
+      sayfaBaslangiciniYukle();
     });
-  }
-
-  await Promise.allSettled([initHero(), loadTrending(1)]);
-}
-
-document.addEventListener('DOMContentLoaded', bootstrapCatalogPage, {
-  once: true,
+  if (clearBtnMobile)
+    clearBtnMobile.addEventListener('click', () => {
+      sıfırlaVeTemizle();
+      searchInput.focus();
+      sayfaBaslangiciniYukle();
+    });
 });
