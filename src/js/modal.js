@@ -1,3 +1,55 @@
+// DOSYANIN EN ÜSTÜNE EKLENECEK IMPORT
+import {
+  isMovieSaved,
+  saveMovieToLibrary,
+  removeMovieFromLibrary,
+} from './library-storage.js';
+
+const refs = {
+  backdrop: document.getElementById('movie-modal-backdrop'),
+  closeBtn: document.getElementById('modal-close-btn'),
+  // ... diğer referansların aynı kalıyor
+  libraryBtn: document.getElementById('library-toggle-btn'),
+};
+
+let currentMovie = null;
+
+// openMovieModal, closeMovieModal, onEscKeyPress, onBackdropClick, populateModalData
+// FONKSİYONLARININ İÇERİĞİ TAMAMEN AYNI KALACAK, DOKUNMA.
+
+// DOSYANIN EN ALTINDAKİ ESKİ LOCALSTORAGE KODLARINI SİLİP ŞUNLARI YAPIŞTIR:
+
+function updateButtonState(movieId) {
+  // library-storage.js'deki isMovieSaved fonksiyonunu kullanıyoruz
+  const isSaved = isMovieSaved(movieId);
+
+  if (isSaved) {
+    refs.libraryBtn.textContent = 'Remove from My Library';
+    refs.libraryBtn.classList.add('active');
+  } else {
+    refs.libraryBtn.textContent = 'Add to My Library';
+    refs.libraryBtn.classList.remove('active');
+  }
+}
+
+function onLibraryBtnClick() {
+  if (!currentMovie) return;
+
+  // Şu anki film kütüphanede var mı kontrol et
+  const isSaved = isMovieSaved(currentMovie.id);
+
+  if (isSaved) {
+    // Varsa kütüphaneden çıkar
+    removeMovieFromLibrary(currentMovie.id);
+    refs.libraryBtn.textContent = 'Add to My Library';
+    refs.libraryBtn.classList.remove('active');
+  } else {
+    // Yoksa kütüphaneye ekle
+    saveMovieToLibrary(currentMovie);
+    refs.libraryBtn.textContent = 'Remove from My Library';
+    refs.libraryBtn.classList.add('active');
+  }
+}
 const STORAGE_KEY = 'my-library-movies';
 
 const refs = {
@@ -126,4 +178,3 @@ function onLibraryBtnClick() {
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
 }
-

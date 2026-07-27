@@ -140,12 +140,10 @@
   margin: 4px 0 0 0;
   height: 160px;
   overflow-y: scroll;
-  z-index: 10;
+  z-index: 999;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
-
-  /* 🔥 CRITICAL FIX: Üst kapsayıcı flex olsa bile listenin başlangıçta kapalı kalmasını sağlar */
   display: none !important;
 }
 
@@ -564,4 +562,11 @@
     height: 40px;
     font-size: 14px;
   }
+}
+/* Gündüz Modu Sayfalama Renk Ayarı */
+body.light-mode .pagination-arrow,
+body.light-mode .pagination-btn:not(.is-active),
+body.light-mode .pagination-dots {
+  color: #111111; /* Gündüz modunda butonlar siyah/koyu gri olur */
+  border-color: rgba(17, 17, 17, 0.4); /* Çerçeve rengi de koyulaşır */
 }

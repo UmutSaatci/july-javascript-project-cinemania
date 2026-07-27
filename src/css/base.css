@@ -582,3 +582,27 @@ body.light-theme .btn--secondary:hover {
 body.light-theme ::-webkit-scrollbar-track {
   background: var(--surface-white-soft);
 }
+/* ===== LIGHT THEME - PAGINATION ===== */
+body.light-theme .pagination-btn {
+  color: var(--background);
+}
+
+body.light-theme .pagination-btn.is-active {
+  background-color: var(--orange);
+  color: var(--white);
+  border: none;
+}
+
+body.light-theme .pagination-dots {
+  color: var(--background);
+}
+body.light-theme .pagination-arrow {
+  color: var(--background);
+  border-color: var(--background);
+}
+
+/* Okun tıklanamaz (disabled) olduğu ilk veya son sayfa durumu için */
+body.light-theme .pagination-arrow:disabled {
+  color: var(--grey);
+  border-color: var(--border-light-soft);
+}

@@ -28,7 +28,7 @@ export async function initHero() {
     if (!data || !data.results) {
       currentHeroMovie = null;
       renderFallbackHero();
-      reportError('API data error:', data);
+     console.error('API data error:', data);
       return;
     }
 
@@ -48,7 +48,7 @@ export async function initHero() {
 
     renderHero(movie);
   } catch (error) {
-    reportError('Hero error:', error);
+    console.error('Hero error:', error);
     currentHeroMovie = null;
     renderFallbackHero();
   }
@@ -218,7 +218,7 @@ async function renderLibraryHero() {
       return;
     }
   } catch (error) {
-    reportError('Library hero error:', error);
+   console.error('Library hero error:', error);
   }
 
   currentLibraryHeroMovie = null;

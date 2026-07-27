@@ -1,4 +1,4 @@
-import { openMovieModal } from './main.js';
+import { openMovieModal } from './modal.js';
 
 export function createCardHtml(movie, genreMap) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : 'N/A';
