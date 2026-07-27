@@ -2,6 +2,7 @@ import { initHeader } from './header.js';
 import { initHome } from './home.js';
 import { initHero } from './hero.js';
 import './footer.js';
+import './modal.js';
 
 import {
   hideGlobalLoader,
