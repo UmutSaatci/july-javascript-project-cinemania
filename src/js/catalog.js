@@ -1,5 +1,7 @@
 import { searchMovies, getTrending, convertGenreIdsToNames } from './api.js';
 import { initHero } from './hero.js';
+import { openMovieModal } from './modal.js';
+import './footer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Hero alanını katalog modunda tetikliyoruz
@@ -219,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       kart.addEventListener('click', () => {
-        console.log(`Selected Movie ID: ${film.id}`);
+        openMovieModal(film);
       });
       moviesListBlock.appendChild(kart);
     }

@@ -1,4 +1,19 @@
 import { getTrending } from './api.js';
+import { openMovieModal } from './modal.js';
+const generateStarIconsMarkup = (rating, className) => {
+  const starCount = Math.round((rating || 0) / 2);
+  let starsHtml = '';
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= starCount) {
+      starsHtml += `<span class="${className}" style="color: orange;">★</span>`;
+    } else {
+      starsHtml += `<span class="${className} star-empty" style="color: gray;">☆</span>`;
+    }
+  }
+
+  return starsHtml;
+};
 const MOBILE_TABLET_MAX_WIDTH = 1279;
 const OVERVIEW_MAX_LENGTH = 192;
 const DEFAULT_HOME_HERO_OVERVIEW =
@@ -28,7 +43,7 @@ export async function initHero() {
     if (!data || !data.results) {
       currentHeroMovie = null;
       renderFallbackHero();
-     console.error('API data error:', data);
+      console.error('API data error:', data);
       return;
     }
 
@@ -146,7 +161,7 @@ function renderHero(movie) {
     </div>
   `;
 
-  attachHeroSpotlightEvents(movie.id);
+  attachHeroSpotlightEvents(movie);
 }
 
 function renderFallbackHero() {
@@ -218,7 +233,7 @@ async function renderLibraryHero() {
       return;
     }
   } catch (error) {
-   console.error('Library hero error:', error);
+    console.error('Library hero error:', error);
   }
 
   currentLibraryHeroMovie = null;
@@ -296,22 +311,139 @@ function renderLibraryFeaturedHero(movie) {
     </div>
   `;
 
-  attachHeroSpotlightEvents(movie.id);
+  attachHeroSpotlightEvents(movie);
 }
 
-function attachHeroSpotlightEvents(movieId) {
-  const hero = document.getElementById('hero');
+async function showMovieTrailerSpotlight(movie) {
+  // Arka planı oluştur ve ekrana bas (Yükleniyor hissi vermek için hemen ekliyoruz)
+  const backdrop = document.createElement('div');
+  backdrop.className = 'spotlight-backdrop';
+  document.body.appendChild(backdrop);
+  document.body.classList.add('spotlight-open');
 
-  if (!hero || !movieId) return;
+  // Fragman anahtarını API'den bekle
+  const youtubeKey = await getMovieTrailerKey(movie.id);
 
-  const trailerButton = hero.querySelector('.btn--primary');
-  const detailsButton = hero.querySelector('.btn--secondary');
+  let modalContent = '';
 
-  trailerButton?.addEventListener('click', () => {
-    showMovieTrailerSpotlight(movieId);
+  if (youtubeKey) {
+    // Fragman bulunduysa YouTube Iframe şablonunu kullan
+    modalContent = `
+      <div class="spotlight-shell spotlight-shell--trailer">
+        <button class="spotlight-close" id="trailer-close-btn"></button>
+        <div class="spotlight-content--trailer" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <iframe 
+            width="100%" 
+            height="100%" 
+            src="https://www.youtube.com/embed/${youtubeKey}?autoplay=1" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"
+          ></iframe>
+        </div>
+      </div>
+    `;
+  } else {
+    // Fragman bulunamadıysa senin CSS'ini yazdığın OOPS (Fallback) şablonunu kullan
+    modalContent = `
+      <div class="spotlight-shell spotlight-shell--trailer">
+        <button class="spotlight-close" id="trailer-close-btn"></button>
+        <div class="spotlight-content--trailer">
+          <div class="spotlight-trailer-fallback">
+            <div class="spotlight-trailer-fallback__copy">
+              <h2 class="spotlight-trailer-fallback__title">OOPS...</h2>
+              <p class="spotlight-trailer-fallback__text">We are very sorry!<br>But we couldn't find the trailer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // İçeriği arka plana ekle
+  backdrop.innerHTML = modalContent;
+
+  // Kapatma Olayları (Events)
+  const closeBtn = backdrop.querySelector('#trailer-close-btn');
+  const closeModal = () => {
+    backdrop.remove();
+    document.body.classList.remove('spotlight-open');
+  };
+
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) closeModal();
   });
-
-  detailsButton?.addEventListener('click', () => {
-    showMovieSpotlight(movieId);
+  window.addEventListener('keydown', function onEsc(e) {
+    if (e.code === 'Escape') {
+      closeModal();
+      window.removeEventListener('keydown', onEsc);
+    }
   });
+}
+
+function showMovieTrailerSpotlight(movie) {
+  // Arka planı oluştur
+  const backdrop = document.createElement('div');
+  backdrop.className = 'spotlight-backdrop';
+
+  // Modal HTML şablonu (layout_2.css'deki tasarıma tam uyumlu)
+  // Not: Şimdilik API'den video çekme kodu olmadığı için ekibin hazırladığı 'Fallback' (Oops) ekranını bağlıyoruz.
+  backdrop.innerHTML = `
+    <div class="spotlight-shell spotlight-shell--trailer">
+      <button class="spotlight-close" id="trailer-close-btn"></button>
+      <div class="spotlight-content--trailer">
+        <div class="spotlight-trailer-fallback">
+          <div class="spotlight-trailer-fallback__copy">
+            <h2 class="spotlight-trailer-fallback__title">OOPS...</h2>
+            <p class="spotlight-trailer-fallback__text">We are very sorry!<br>But we couldn't find the trailer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(backdrop);
+  document.body.classList.add('spotlight-open');
+
+  // Modalı kapatma işlemleri
+  const closeBtn = backdrop.querySelector('#trailer-close-btn');
+  const closeModal = () => {
+    backdrop.remove();
+    document.body.classList.remove('spotlight-open');
+  };
+
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) closeModal();
+  });
+  window.addEventListener('keydown', function onEsc(e) {
+    if (e.code === 'Escape') {
+      closeModal();
+      window.removeEventListener('keydown', onEsc);
+    }
+  });
+}
+// TMDB API'den filmin YouTube fragman key'ini çeken fonksiyon
+async function getMovieTrailerKey(movieId) {
+  // DİKKAT: Projendeki kendi API key'ini buraya yazmalısın
+  const API_KEY = 'SENIN_TMDB_API_ANAHTARIN';
+  const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Gelen sonuçlar arasından YouTube ve Trailer (Fragman) olanı bul
+    const trailer = data.results.find(
+      video => video.site === 'YouTube' && video.type === 'Trailer'
+    );
+
+    return trailer ? trailer.key : null;
+  } catch (error) {
+    console.error('Fragman çekilirken hata oluştu:', error);
+    return null;
+  }
 }

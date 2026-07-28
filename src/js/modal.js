@@ -1,56 +1,8 @@
-// DOSYANIN EN ÜSTÜNE EKLENECEK IMPORT
 import {
   isMovieSaved,
   saveMovieToLibrary,
   removeMovieFromLibrary,
 } from './library-storage.js';
-
-const refs = {
-  backdrop: document.getElementById('movie-modal-backdrop'),
-  closeBtn: document.getElementById('modal-close-btn'),
-  // ... diğer referansların aynı kalıyor
-  libraryBtn: document.getElementById('library-toggle-btn'),
-};
-
-let currentMovie = null;
-
-// openMovieModal, closeMovieModal, onEscKeyPress, onBackdropClick, populateModalData
-// FONKSİYONLARININ İÇERİĞİ TAMAMEN AYNI KALACAK, DOKUNMA.
-
-// DOSYANIN EN ALTINDAKİ ESKİ LOCALSTORAGE KODLARINI SİLİP ŞUNLARI YAPIŞTIR:
-
-function updateButtonState(movieId) {
-  // library-storage.js'deki isMovieSaved fonksiyonunu kullanıyoruz
-  const isSaved = isMovieSaved(movieId);
-
-  if (isSaved) {
-    refs.libraryBtn.textContent = 'Remove from My Library';
-    refs.libraryBtn.classList.add('active');
-  } else {
-    refs.libraryBtn.textContent = 'Add to My Library';
-    refs.libraryBtn.classList.remove('active');
-  }
-}
-
-function onLibraryBtnClick() {
-  if (!currentMovie) return;
-
-  // Şu anki film kütüphanede var mı kontrol et
-  const isSaved = isMovieSaved(currentMovie.id);
-
-  if (isSaved) {
-    // Varsa kütüphaneden çıkar
-    removeMovieFromLibrary(currentMovie.id);
-    refs.libraryBtn.textContent = 'Add to My Library';
-    refs.libraryBtn.classList.remove('active');
-  } else {
-    // Yoksa kütüphaneye ekle
-    saveMovieToLibrary(currentMovie);
-    refs.libraryBtn.textContent = 'Remove from My Library';
-    refs.libraryBtn.classList.add('active');
-  }
-}
-const STORAGE_KEY = 'my-library-movies';
 
 const refs = {
   backdrop: document.getElementById('movie-modal-backdrop'),
@@ -123,15 +75,13 @@ function populateModalData(movie) {
   }
 
   refs.poster.alt = title || 'Movie Poster';
-
   refs.title.textContent = title || 'Untitled';
-
   refs.vote.textContent = vote_average ? vote_average.toFixed(1) : '0.0';
   refs.votesCount.textContent = vote_count ? vote_count : '0';
   refs.popularity.textContent = popularity ? popularity.toFixed(1) : '0.0';
 
   if (genres && Array.isArray(genres) && genres.length > 0) {
-    refs.genre.textContent = genres.map(g => g.name).join(', ');
+    refs.genre.textContent = genres.map(g => (typeof g === 'object' ? g.name : g)).join(', ');
   } else {
     refs.genre.textContent = 'N/A';
   }
@@ -142,14 +92,8 @@ function populateModalData(movie) {
   updateButtonState(id);
 }
 
-function getLibraryFromStorage() {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
 function updateButtonState(movieId) {
-  const library = getLibraryFromStorage();
-  const isSaved = library.some(item => item.id === movieId);
+  const isSaved = isMovieSaved(movieId);
 
   if (isSaved) {
     refs.libraryBtn.textContent = 'Remove from My Library';
@@ -163,18 +107,15 @@ function updateButtonState(movieId) {
 function onLibraryBtnClick() {
   if (!currentMovie) return;
 
-  let library = getLibraryFromStorage();
-  const index = library.findIndex(item => item.id === currentMovie.id);
+  const isSaved = isMovieSaved(currentMovie.id);
 
-  if (index !== -1) {
-    library.splice(index, 1);
+  if (isSaved) {
+    removeMovieFromLibrary(currentMovie.id);
     refs.libraryBtn.textContent = 'Add to My Library';
     refs.libraryBtn.classList.remove('active');
   } else {
-    library.push(currentMovie);
+    saveMovieToLibrary(currentMovie);
     refs.libraryBtn.textContent = 'Remove from My Library';
     refs.libraryBtn.classList.add('active');
   }
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
 }

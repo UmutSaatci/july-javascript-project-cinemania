@@ -1,11 +1,26 @@
 import { getTrending, getUpcoming, getMovieDetails } from './api.js';
+import { openMovieModal } from './modal.js';
+import { showGlobalLoader, hideGlobalLoader } from './uz.js';
+import {
+  isMovieSaved,
+  saveMovieToLibrary,
+  removeMovieFromLibrary,
+} from './library-storage.js';
 
-const showGlobalLoader = () => console.log('Yükleniyor...');
-const hideGlobalLoader = () => console.log('Yükleme bitti.');
-const generateStarIconsMarkup = () => '<span style="color:orange;">★</span>';
-const isMovieSaved = () => false;
-const saveMovieToLibrary = () => {};
-const removeMovieFromLibrary = () => {};
+const generateStarIconsMarkup = (rating, className) => {
+  const starCount = Math.round((rating || 0) / 2);
+  let starsHtml = '';
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= starCount) {
+      starsHtml += `<span class="${className}" style="color: orange;">★</span>`;
+    } else {
+      starsHtml += `<span class="${className} star-empty" style="color: gray;">☆</span>`;
+    }
+  }
+
+  return starsHtml;
+};
 
 const weeklyList = document.getElementById('weeklyList');
 const upcomingWrapper = document.getElementById('upcomingWrapper');
@@ -65,7 +80,8 @@ async function renderWeeklyTrends() {
   const cardElements = weeklyList.querySelectorAll('.movie-card');
   cardElements.forEach((card, index) => {
     card.addEventListener('click', () => {
-      console.log('Seçilen Film:', movies[index]);
+      // Arkadaşının console.log'u yerine senin asıl modal açma fonksiyonun
+      openMovieModal(movies[index]);
     });
   });
 }

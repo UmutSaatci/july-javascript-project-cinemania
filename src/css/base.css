@@ -606,3 +606,20 @@ body.light-theme .pagination-arrow:disabled {
   color: var(--grey);
   border-color: var(--border-light-soft);
 }
+/* Gündüz modunda Hero alanındaki siyah gölgeyi beyaz geçişe çevirir */
+body.light-theme .hero__overlay {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.95) 30%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.4) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* Gündüz modunda beyaz gölgenin üzerindeki başlık ve açıklamayı okunabilir siyah yapar */
+body.light-theme .hero__title,
+body.light-theme .hero__overview {
+  color: var(--background);
+}

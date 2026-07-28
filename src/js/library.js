@@ -4,6 +4,7 @@ import './footer.js';
 import { hideGlobalLoader, initGlobalUi, showGlobalLoader } from './uz.js';
 import { convertGenreIdsToNames, getGenres } from './api.js';
 import { readSavedMovies } from './library-storage.js';
+import { openMovieModal } from './modal.js';
 
 let allMovies = [];
 let filteredMovies = [];
@@ -57,14 +58,26 @@ async function setupLibrary() {
   container.addEventListener('click', e => {
     const card = e.target.closest('.movie-card');
     if (card) {
-      console.log('Seçilen film ID:', card.dataset.id);
-      // Eğer modal veya detay fonksiyonu varsa burada güvenle çağırabilirsiniz
+      const movieId = Number(card.dataset.id);
+
+      // Tıklanan filmi elimizdeki mevcut (filtrelenmiş veya tüm) listeden buluyoruz
+      const selectedMovie =
+        filteredMovies.find(m => Number(m.id) === movieId) ||
+        allMovies.find(m => Number(m.id) === movieId);
+
+      if (selectedMovie) {
+        openMovieModal(selectedMovie);
+      }
     }
   });
 
   // film eklendiğinde veya silindiğinde sayfayı yenile
-  document.addEventListener('cinemania:library:add', () => refreshLibrary(container, loadMoreBtn));
-  document.addEventListener('cinemania:library:remove', () => refreshLibrary(container, loadMoreBtn));
+  document.addEventListener('cinemania:library:add', () =>
+    refreshLibrary(container, loadMoreBtn)
+  );
+  document.addEventListener('cinemania:library:remove', () =>
+    refreshLibrary(container, loadMoreBtn)
+  );
 }
 
 // kütüphane boşsa gösterilecek alan
@@ -128,7 +141,9 @@ function setupGenreDropdown(genreFilter, genreMap, container, loadMoreBtn) {
     const li = e.target.closest('li');
     if (!li) return;
 
-    list.querySelectorAll('li').forEach(item => item.classList.remove('selected'));
+    list
+      .querySelectorAll('li')
+      .forEach(item => item.classList.remove('selected'));
     li.classList.add('selected');
     label.textContent = li.textContent;
     list.classList.add('hide');
@@ -137,9 +152,10 @@ function setupGenreDropdown(genreFilter, genreMap, container, loadMoreBtn) {
     currentPage = 1;
     container.innerHTML = '';
 
-    filteredMovies = selectedId === 'all'
-      ? allMovies
-      : allMovies.filter(m => m.genre_ids?.includes(Number(selectedId)));
+    filteredMovies =
+      selectedId === 'all'
+        ? allMovies
+        : allMovies.filter(m => m.genre_ids?.includes(Number(selectedId)));
 
     renderLibraryPage(container, loadMoreBtn);
   });
@@ -159,9 +175,10 @@ async function renderLibraryPage(container, loadMoreBtn) {
 
   const cardsHtml = await Promise.all(
     slice.map(async movie => {
-      const genres = movie.genre_names?.length > 0
-        ? movie.genre_names
-        : await convertGenreIdsToNames(movie.genre_ids || []);
+      const genres =
+        movie.genre_names?.length > 0
+          ? movie.genre_names
+          : await convertGenreIdsToNames(movie.genre_ids || []);
 
       const year = movie.release_date ? movie.release_date.slice(0, 4) : '—';
       const poster = movie.poster_path
@@ -169,6 +186,17 @@ async function renderLibraryPage(container, loadMoreBtn) {
         : './img/oops-logo.png';
 
       const rating = (movie.vote_average || 0).toFixed(1);
+
+      // Puanı 5 üzerinden yıldız sayısına çevirme
+      const starCount = Math.round((movie.vote_average || 0) / 2);
+      let starsHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= starCount) {
+          starsHtml += `<span class="movie-card__star" style="color: orange;">★</span>`;
+        } else {
+          starsHtml += `<span class="movie-card__star star-empty" style="color: gray;">☆</span>`;
+        }
+      }
 
       return `
         <li class="movie-card" data-id="${movie.id}">
@@ -181,6 +209,7 @@ async function renderLibraryPage(container, loadMoreBtn) {
           <h3 class="movie-card__title">${movie.title}</h3>
           <div class="movie-card__meta">
             <p>${genres.slice(0, 2).join(', ')} | ${year}</p>
+            <div class="movie-card__stars">${starsHtml}</div>
           </div>
         </li>`;
     })
@@ -206,7 +235,9 @@ function refreshLibrary(container, loadMoreBtn) {
 
 // başlatıcı
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initLibraryPage, { once: true });
+  document.addEventListener('DOMContentLoaded', initLibraryPage, {
+    once: true,
+  });
 } else {
   initLibraryPage();
 }

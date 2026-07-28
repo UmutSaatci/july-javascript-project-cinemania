@@ -1329,3 +1329,14 @@ body.light-theme .spotlight-library-button {
   color: var(--background);
   border-color: var(--orange);
 }
+/* Gündüz modunda More Details butonunun renklerini tersine çeviriyoruz */
+body.light-theme .btn--secondary {
+  color: #111111;
+  border: 1px solid #111111;
+  background-color: transparent;
+}
+
+body.light-theme .btn--secondary:hover {
+  background-color: #111111;
+  color: #ffffff;
+}
