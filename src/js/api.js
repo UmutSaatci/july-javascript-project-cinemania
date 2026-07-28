@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_KEY = import.meta.env.VITE_TMDB_KEY;
+const API_KEY = 'd6a19efda452b456e766d6a2dd5e91a2';
 
 export const TMDB_CONFIG_ERROR =
   'TMDB live data is unavailable because VITE_TMDB_KEY is missing.';
