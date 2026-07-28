@@ -314,6 +314,7 @@ function renderLibraryFeaturedHero(movie) {
   attachHeroSpotlightEvents(movie);
 }
 
+// Dinamik Modal Fonksiyonu (Senin Şaheser)
 async function showMovieTrailerSpotlight(movie) {
   // Arka planı oluştur ve ekrana bas (Yükleniyor hissi vermek için hemen ekliyoruz)
   const backdrop = document.createElement('div');
@@ -384,52 +385,9 @@ async function showMovieTrailerSpotlight(movie) {
   });
 }
 
-function showMovieTrailerSpotlight(movie) {
-  // Arka planı oluştur
-  const backdrop = document.createElement('div');
-  backdrop.className = 'spotlight-backdrop';
-
-  // Modal HTML şablonu (layout_2.css'deki tasarıma tam uyumlu)
-  // Not: Şimdilik API'den video çekme kodu olmadığı için ekibin hazırladığı 'Fallback' (Oops) ekranını bağlıyoruz.
-  backdrop.innerHTML = `
-    <div class="spotlight-shell spotlight-shell--trailer">
-      <button class="spotlight-close" id="trailer-close-btn"></button>
-      <div class="spotlight-content--trailer">
-        <div class="spotlight-trailer-fallback">
-          <div class="spotlight-trailer-fallback__copy">
-            <h2 class="spotlight-trailer-fallback__title">OOPS...</h2>
-            <p class="spotlight-trailer-fallback__text">We are very sorry!<br>But we couldn't find the trailer.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(backdrop);
-  document.body.classList.add('spotlight-open');
-
-  // Modalı kapatma işlemleri
-  const closeBtn = backdrop.querySelector('#trailer-close-btn');
-  const closeModal = () => {
-    backdrop.remove();
-    document.body.classList.remove('spotlight-open');
-  };
-
-  closeBtn.addEventListener('click', closeModal);
-  backdrop.addEventListener('click', e => {
-    if (e.target === backdrop) closeModal();
-  });
-  window.addEventListener('keydown', function onEsc(e) {
-    if (e.code === 'Escape') {
-      closeModal();
-      window.removeEventListener('keydown', onEsc);
-    }
-  });
-}
 // TMDB API'den filmin YouTube fragman key'ini çeken fonksiyon
 async function getMovieTrailerKey(movieId) {
-  // DİKKAT: Projendeki kendi API key'ini buraya yazmalısın
-  const API_KEY = 'SENIN_TMDB_API_ANAHTARIN';
+  const API_KEY = 'd6a19efda452b456e766d6a2dd5e91a2'; 
   const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`;
 
   try {
