@@ -405,7 +405,7 @@ async function showMovieTrailerSpotlight(movie) {
 
 // TMDB API'den filmin YouTube fragman key'ini çeken fonksiyon
 async function getMovieTrailerKey(movieId) {
-  const API_KEY = import.meta.env.VITE_TMDB_KEY;
+  const API_KEY = 'd6a19efda452b456e766d6a2dd5e91a2';
   const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`;
 
   try {
