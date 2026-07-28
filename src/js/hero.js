@@ -68,7 +68,27 @@ export async function initHero() {
     renderFallbackHero();
   }
 }
+// Butonları canlandıran kayıp fonksiyon
+function attachHeroSpotlightEvents(movie) {
+  const hero = document.getElementById('hero');
+  if (!hero) return;
 
+  // 1. "Watch trailer" butonunu bul ve fragman modalını (senin kodunu) tetikle
+  const trailerBtn = hero.querySelector('.btn--primary');
+  if (trailerBtn) {
+    trailerBtn.addEventListener('click', () => {
+      showMovieTrailerSpotlight(movie);
+    });
+  }
+
+  // 2. "More details" butonunu bul ve film detay modalını aç
+  const detailsBtn = hero.querySelector('.btn--secondary');
+  if (detailsBtn) {
+    detailsBtn.addEventListener('click', () => {
+      openMovieModal(movie);
+    });
+  }
+}
 function getAssetUrl(filename) {
   return new URL(`../img/${filename}`, import.meta.url).href;
 }
@@ -332,16 +352,14 @@ async function showMovieTrailerSpotlight(movie) {
     modalContent = `
       <div class="spotlight-shell spotlight-shell--trailer">
         <button class="spotlight-close" id="trailer-close-btn"></button>
-        <div class="spotlight-content--trailer" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <!-- DİKKAT: Buradaki div'e aspect-ratio: 16/9 verdik ve flex'i sildik -->
+        <div class="spotlight-content--trailer" style="width: 100%; aspect-ratio: 16 / 9; position: relative; border-radius: 12px; overflow: hidden;">
           <iframe 
-            width="100%" 
-            height="100%" 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"
             src="https://www.youtube.com/embed/${youtubeKey}?autoplay=1" 
             title="YouTube video player" 
-            frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
-            style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"
           ></iframe>
         </div>
       </div>
@@ -387,7 +405,7 @@ async function showMovieTrailerSpotlight(movie) {
 
 // TMDB API'den filmin YouTube fragman key'ini çeken fonksiyon
 async function getMovieTrailerKey(movieId) {
-  const API_KEY = 'd6a19efda452b456e766d6a2dd5e91a2'; 
+  const API_KEY = import.meta.env.VITE_TMDB_KEY;
   const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`;
 
   try {
