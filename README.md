@@ -1,113 +1,84 @@
-# Vanilla App Template
+# 🎬 Cinemania - Modern Phonebook & Cinema Community Application
 
-Цей проект було створено за допомогою Vite. Для знайомства та налаштування
-додаткових можливостей [звернись до документації](https://vitejs.dev/).
+This repository is a fully modernized, secure, and feature-rich **React + Redux Toolkit** application built on top of the original **Cinemania** template. By forking the original codebase, I refactored the entire architectural skeleton, decoupled core components, integrated persistent authentication, and injected fluid micro-interactions to maximize user experience (UX).
 
-## Створення репозиторію за шаблоном
+---
 
-Використовуй цей репозиторій організації GoIT як шаблон для створення
-репозиторію свого проекту. Для цього натисни на кнопку `«Use this template»` і
-обери опцію `«Create a new repository»`, як показано на зображенні.
+## 🔥 Key Contributions & Architectural Enhancements (What I Built)
 
-![Creating repo from a template step 1](./assets/template-step-1.png)
+After forking the repository, I implemented the following critical technical milestones to elevate the project to production-ready standards:
 
-На наступному етапі відкриється сторінка створення нового репозиторію. Заповни
-поле його імені, переконайся, що репозиторій публічний, після чого натисни
-кнопку `«Create repository from template»`.
+### 1. 🔐 Robust Authentication & Session Persistence
+* **Asynchronous Auth Flows:** Leveraged Redux Toolkit's `createAsyncThunk` to architect end-to-end asynchronous flows for `signupUser`, `loginUser`, and `logoutUser`.
+* **F5 / Page Refresh Protection (`refreshUserToken`):** Solved the common SPA state-wipe bug upon browser refresh by integrating a background hydration check with the `GET /users/current` endpoint, ensuring seamless token validation.
 
-![Creating repo from a template step 2](./assets/template-step-2.png)
+### 2. 🛡️ Advanced Route Guarding & Structural Layouts
+* **Modular Dashboard Layout (`Layout` & `AppBar`):** Crafted a responsive, globally accessible layout structure. Separated the main navigation bar into isolated, clean sub-components: `Navigation`, `AuthNav`, and `UserMenu`.
+* **Smart Route Barriers:** Designed scalable `PrivateRoute` and `RestrictedRoute` components. Unauthenticated users are securely guarded against private routes (`/contacts`), while authenticated users are barred from backtracking into `/login` or `/register`.
 
-Після того, як репозиторій буде створено, необхідно перейти в налаштування
-створеного репозиторію на вкладку `Settings` > `Actions` > `General` як показано
-на зображенні.
+### 3. 💾 State Persistence & Zero-Flakiness API Integration
+* **Token Whitelisting with Redux Persist:** Integrated `@reduxjs/toolkit` with `redux-persist` to save only the secure JWT token inside `localStorage`.
+* **Vite-Compatible Storage Handler:** Overcame Vite's bundle-time CommonJS issues with `redux-persist/lib/storage` by writing a seamless, async-safe `customStorage` object mapping directly to native browser methods.
+* **Global Authorization Injection (`setAuthHeader`):** Solved the **401 Unauthorized** error chain upon refreshing the page by centralizing token injection directly inside Axios global defaults.
 
-![Settings GitHub Actions permissions step 1](./assets/gh-actions-perm-1.png)
+### 4. ✏️ Inline Live Editing Support (`PATCH` Request)
+* **Fluid Inline CRUD Operations:** Expanded the backend API usage beyond simple deletions by tapping into the `PATCH /contacts/{id}` endpoint. Users can now toggle an editing state directly within any card and update a contact's name or phone number seamlessly.
+* **Duplicate Entry Guard:** Implemented a case-insensitive, space-trimmed data filter (`toLowerCase` and `trim`) that intercepts form submissions to prevent duplicate contact information.
 
-Проскроливши сторінку до самого кінця, в секції `«Workflow permissions»` обери
-опцію `«Read and write permissions»` і постав галочку в чекбоксі. Це необхідно
-для автоматизації процесу деплою проекту.
+### 5. ✨ Impeccable UX & Polished Micro-Interactions
+* **Bug-Free Confirmation Modal via React Portals:** Built a fully centered delete-confirmation dialog that renders outside the deep component hierarchy (directly under `document.body`) using `createPortal`. It completely bypasses parent CSS overflow issues and supports native `ESC` key listening.
+* **Instant Feedbacks (`React Hot Toast`):** Wired up beautiful, reactive notification bubbles for login, logout, account creation, successful CRUD operations, and system alerts using `.unwrap()` thunk chaining.
+* **Active Routing State (`NavLink`):** Stylized navigation cues using CSS Modules to visually tint and highlight the active link based on the user's viewport location.
 
-![Settings GitHub Actions permissions step 2](./assets/gh-actions-perm-2.png)
+---
 
-Тепер у тебе є особистий репозиторій проекту, зі структурою файлів та папок
-репозиторію-шаблону. Далі працюй з ним, як з будь-яким іншим особистим
-репозиторієм, клонуй його собі на комп'ютер, пиши код, роби коміти та відправляй
-їх на GitHub.
+## 🛠️ Technology Stack & Dependencies
 
-## Підготовка до роботи
+* **Core Framework:** React (v18+) & Vite (Next-generation lightning-fast build tool)
+* **State Management:** Redux Toolkit (`@reduxjs/toolkit`) & `redux-persist`
+* **Routing Engine:** React Router DOM (v6+)
+* **Form Integrity:** Formik & Yup (Strict client-side schemas for data structures)
+* **User Notifications:** React Hot Toast
+* **Iconsets:** React Icons (`bs` suite)
+* **Style Architecture:** CSS Modules (Scoped, component-isolated styling)
+* **Code Quality Assurance:** ESLint (Optimized for flat config structures / `eslint.config.mjs`)
 
-1. Переконайся, що на комп'ютері встановлено LTS-версію Node.js.
-   [Скачай та встанови](https://nodejs.org/en/) її якщо необхідно.
-2. Встанови базові залежності проекту в терміналі командою `npm install`.
-3. Запусти режим розробки, виконавши в терміналі команду `npm run dev`.
-4. Перейдіть у браузері за адресою
-   [http://localhost:5173](http://localhost:5173). Ця сторінка буде автоматично
-   перезавантажуватись після збереження змін у файли проекту.
+---
 
-## Файли і папки
+## 🚀 Live Environment Refresh Routing Fix (Vercel)
 
-- Файли розмітки компонентів сторінки повинні лежати в папці `src/partials` та
-  імпортуватись до файлу `index.html`. Наприклад, файл з розміткою хедера
-  `header.html` створюємо у папці `partials` та імпортуємо в `index.html`.
-- Файли стилів повинні лежати в папці `src/css` та імпортуватись до HTML-файлів
-  сторінок. Наприклад, для `index.html` файл стилів називається `index.css`.
-- Зображення додавай до папки `src/img`. Збирач оптимізує їх, але тільки при
-  деплої продакшн версії проекту. Все це відбувається у хмарі, щоб не
-  навантажувати твій комп'ютер, тому що на слабких компʼютерах це може зайняти
-  багато часу.
-
-## Деплой
-
-Продакшн версія проекту буде автоматично збиратися та деплоїтись на GitHub
-Pages, у гілку `gh-pages`, щоразу, коли оновлюється гілка `main`. Наприклад,
-після прямого пуша або прийнятого пул-реквесту. Для цього необхідно у файлі
-`package.json` змінити значення прапора `--base=/<REPO>/`, для команди `build`,
-замінивши `<REPO>` на назву свого репозиторію, та відправити зміни на GitHub.
+To avoid breaking the application router when users manually refresh the browser under a specific sub-route on production (MERN stack SPA 404 error), I deployed a custom redirection asset (`vercel.json`) at the absolute root of the workspace:
 
 ```json
-"build": "vite build --base=/<REPO>/",
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
 ```
 
-Далі необхідно зайти в налаштування GitHub-репозиторію (`Settings` > `Pages`) та
-виставити роздачу продакшн версії файлів з папки `/root` гілки `gh-pages`, якщо
-це не було зроблено автоматично.
+---
 
-![GitHub Pages settings](./assets/repo-settings.png)
+## 💻 Local Spin-Up Instructions
 
-### Статус деплою
+Follow these instructions to clone and run the application locally on your machine:
 
-Статус деплою крайнього коміту відображається іконкою біля його ідентифікатора.
-
-- **Жовтий колір** - виконується збірка та деплой проекту.
-- **Зелений колір** - деплой завершився успішно.
-- **Червоний колір** - під час лінтингу, збірки чи деплою сталася помилка.
-
-Більш детальну інформацію про статус можна переглянути натиснувши на іконку, і в
-вікні, що випадає, перейти за посиланням `Details`.
-
-![Deployment status](./assets/deploy-status.png)
-
-### Жива сторінка
-
-Через якийсь час, зазвичай кілька хвилин, живу сторінку можна буде подивитися за
-адресою, вказаною на вкладці `Settings` > `Pages` в налаштуваннях репозиторію.
-Наприклад, ось посилання на живу версію для цього репозиторію
-
-[https://goitacademy.github.io/vanilla-app-template/](https://goitacademy.github.io/vanilla-app-template/).
-
-Якщо відкриється порожня сторінка, переконайся, що у вкладці `Console` немає
-помилок пов'язаних з неправильними шляхами до CSS та JS файлів проекту
-(**404**). Швидше за все у тебе неправильне значення прапора `--base` для
-команди `build` у файлі `package.json`.
-
-## Як це працює
-
-![How it works](./assets/how-it-works.png)
-
-1. Після кожного пуша у гілку `main` GitHub-репозиторію, запускається
-   спеціальний скрипт (GitHub Action) із файлу `.github/workflows/deploy.yml`.
-2. Усі файли репозиторію копіюються на сервер, де проект ініціалізується та
-   проходить лінтинг та збірку перед деплоєм.
-3. Якщо всі кроки пройшли успішно, зібрана продакшн версія файлів проекту
-   відправляється у гілку `gh-pages`. В іншому випадку, у лозі виконання скрипта
-   буде вказано в чому проблема.
+1. Clone the repository into your local space:
+   ```bash
+   git clone <your-repo-url>
+   ```
+2. Step inside the workspace directory:
+   ```bash
+   cd goit-react-hw-08
+   ```
+3. Install all baseline and architectural dependencies:
+   ```bash
+   npm install
+   ```
+4. Run the project under a localized dev server:
+   ```bash
+   npm run dev
+   ```
